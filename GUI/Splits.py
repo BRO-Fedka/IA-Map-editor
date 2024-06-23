@@ -1,5 +1,6 @@
 from tkinter import *
 from typing import *
+import math
 
 
 class SplitHorizontal(Frame):
@@ -15,21 +16,23 @@ class SplitHorizontal(Frame):
         self.__split_place = split_place
         self.bind('<Configure>', self.set_split_place)
 
-    def set_left_widget(self, widget: Widget, min_size: int = 10):
+    def set_left_widget(self, widget: Widget, min_size: int = 10, add_binds: bool = True):
         self.__left_item = widget
         self.__l_min_size = min_size
         widget.place(relx=0, relwidth=self.__split_place, rely=0, relheight=1)
-        widget.bind('<Motion>', self.__on_motion_left_widget)
-        widget.bind("<ButtonPress>", self.__on_press_left_widget)
-        widget.bind("<ButtonRelease>", self.__on_release)
+        if add_binds:
+            widget.bind('<Motion>', self.__on_motion_left_widget)
+            widget.bind("<ButtonPress>", self.__on_press_left_widget)
+            widget.bind("<ButtonRelease>", self.__on_release)
 
-    def set_right_widget(self, widget: Widget, min_size: int = 10):
+    def set_right_widget(self, widget: Widget, min_size: int = 10, add_binds: bool = True):
         self.__right_item = widget
         self.__r_min_size = min_size
         widget.place(relx=self.__split_place, relwidth=1 - self.__split_place, rely=0, relheight=1)
-        widget.bind('<Motion>', self.__on_motion_right_widget)
-        widget.bind("<ButtonPress>", self.__on_press_right_widget)
-        widget.bind("<ButtonRelease>", self.__on_release)
+        if add_binds:
+            widget.bind('<Motion>', self.__on_motion_right_widget)
+            widget.bind("<ButtonPress>", self.__on_press_right_widget)
+            widget.bind("<ButtonRelease>", self.__on_release)
 
     def set_split_place(self, split_place: float):
         if type(split_place) != float:
@@ -81,26 +84,30 @@ class SplitHorizontal(Frame):
             self.__left_item = None
 
     def __on_motion_right_widget(self, event):
-        if round(event.x/self.winfo_width()*50)/50 == 0:
-            self['cursor'] = 'sb_h_double_arrow'
+        if event.x < 5:
+            event.widget['cursor'] = 'sb_h_double_arrow'
         else:
-            self['cursor'] = 'arrow'
+            event.widget['cursor'] = 'arrow'
         if self.__is_split_held:
-            self['cursor'] = 'sb_h_double_arrow'
+            event.widget['cursor'] = 'sb_h_double_arrow'
             self.set_split_place(self.__split_place+event.x/self.winfo_width())
 
     def __on_motion_left_widget(self, event):
-        if round(event.x/self.winfo_width()*50)/50 == self.__split_place:
-            self['cursor'] = 'sb_h_double_arrow'
+
+        if abs(event.widget.winfo_width()-event.x) < 5:
+            event.widget['cursor'] = 'sb_h_double_arrow'
         else:
-            self['cursor'] = 'arrow'
+            event.widget['cursor'] = 'arrow'
+        if self.__is_split_held:
+            event.widget['cursor'] = 'sb_h_double_arrow'
+            self.set_split_place(event.x / self.winfo_width())
 
     def __on_press_right_widget(self, event):
-        if round(event.x/self.winfo_width()*50)/50 == 0:
+        if event.x < 5:
             self.__is_split_held = True
 
     def __on_press_left_widget(self, event):
-        if round(event.x/self.winfo_width()*50)/50 == self.__split_place:
+        if abs(event.widget.winfo_width()-event.x) < 5:
             self.__is_split_held = True
 
     def __on_release(self, event):

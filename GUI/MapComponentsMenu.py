@@ -7,11 +7,15 @@ class MapComponentsMenu(Frame):
     __card_list: List[MapComponentCard] = []
     __last_amount_of_columns: int = 0
     __last_amount_of_cards: int = 0
+    __selected_card: MapComponentCard = None
 
     def __init__(self, master: Optional[Misc], **kwargs):
         super().__init__(master, kwargs)
 
     def add_card(self, card: MapComponentCard):
+        if self.__selected_card is None:
+            self.__selected_card = card
+            card.select()
         self.__last_amount_of_cards = len(self.__card_list)
         self.__card_list.append(card)
         self.update_content()
@@ -30,12 +34,24 @@ class MapComponentsMenu(Frame):
                 pass
 
         for card_number in range(0,len(self.__card_list)):
-            self.__card_list[card_number].grid(row=int(card_number//columns_amount), column=int(card_number % columns_amount))
+            self.__card_list[card_number].grid(row=int(card_number//columns_amount), column=int(card_number % columns_amount), padx=5, pady=5)
 
     def place_configure(self, **kw):
 
         super().place_configure(kw)
         self.update_content()
+
+    def select(self, card: MapComponentCard):
+        self.__selected_card = card
+        children = self.winfo_children()
+        for child in children:
+            if child != card:
+                child.unselect()
+        card.select()
+
+    def get_selected_map_component(self):
+        return self.__selected_card.get_map_component()
+
 
 
 
