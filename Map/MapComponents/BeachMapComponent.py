@@ -3,16 +3,16 @@ from Map.MapComponents.PolyMapComponent import *
 
 class BeachMapComponent(PolyMapComponent):
 
-    def __init__(self, workspace: Workspace, shape: Polygon):
-        super().__init__(workspace, shape)
-        workspace.itemconfig(self._object_id, fill="#d0c092")
+    def update_instance_ct(self):
+        print(self._map.get_ct_field('bf'))
+        self._workspace.itemconfig(self._object_id, fill=self._map.get_ct_field('bf'))
 
     @classmethod
-    def parse_map_raw_data_create_all(cls, data: dict, workspace: Workspace):
+    def parse_map_raw_data_create_all(cls, data: dict, workspace: Workspace, map:IMap):
         try:
             list_of_polys = data['B']
             for _ in list_of_polys:
-                cls.new_component(workspace, Polygon(_))
+                cls.new_component(workspace, Polygon(_),map)
         except KeyError:
             pass
 

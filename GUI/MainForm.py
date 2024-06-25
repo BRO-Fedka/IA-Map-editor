@@ -2,12 +2,6 @@ from GUI.MainMenu import *
 from GUI.InfoBar import *
 from GUI.Splits import *
 from GUI.MapComponentsMenu import *
-from Map.MapComponents.MapComponent import *
-from Map.MapComponents.PolyMapComponent import *
-from Map.MapComponents.BeachMapComponent import *
-from Map.MapComponents.StoneMapComponent import *
-
-from functions.functions import *
 
 
 class MainForm(Tk):

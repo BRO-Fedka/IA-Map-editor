@@ -2,6 +2,7 @@ from tkinter import *
 from GUI.Workspace import *
 from shapely.geometry import *
 from shapely.geometry import base
+from Map.IMap import *
 
 
 class MapComponent:
@@ -9,10 +10,21 @@ class MapComponent:
     _object_id: int = None
     _instances: List = []
     _shape: base.BaseGeometry = None
+    _map: IMap = None
 
-    def __init__(self, workspace: Workspace, shape: base.BaseGeometry):
+    def __init__(self, workspace: Workspace, shape: base.BaseGeometry, map: IMap):
         self._workspace = workspace
         self._shape = shape
+        self._map = map
+
+    def update_instance_ct(self):
+        pass
+
+    @classmethod
+    def update_ct(cls):
+        print('!')
+        for mc in cls._instances:
+            mc.update_instance_ct()
 
     @classmethod
     def update(cls):
@@ -23,13 +35,21 @@ class MapComponent:
         pass
 
     @classmethod
-    def parse_map_raw_data_create_all(cls, data: dict, workspace: Workspace):
+    def parse_map_raw_data_create_all(cls, data: dict, workspace: Workspace, map:IMap):
         raise NotImplementedError
 
     @classmethod
-    def new_component(cls, workspace: Workspace, shape: base.BaseGeometry):
+    def lift(cls):
+        for mc in cls._instances:
+            mc.lift_instance()
+
+    def lift_instance(self):
+        self._workspace.lift(self._object_id)
+
+    @classmethod
+    def new_component(cls, workspace: Workspace, shape: base.BaseGeometry,map: IMap):
         # print(dir(cls))
-        new_component = cls(workspace, shape)
+        new_component = cls(workspace, shape,map)
         cls._instances.append(new_component)
 
         return new_component
