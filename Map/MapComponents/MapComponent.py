@@ -5,32 +5,39 @@ from shapely.geometry import base
 
 
 class MapComponent:
-    __workspace: Workspace = None
-    __map: Map = None
-    __object_id: int = None
-    __instances: List = []
-    __shape: base.BaseGeometry = None
+    _workspace: Workspace = None
+    _object_id: int = None
+    _instances: List = []
+    _shape: base.BaseGeometry = None
 
-    def __init__(self, map: Map, workspace: Workspace, shape: base.BaseGeometry):
-        self.__workspace = workspace
-        self.__map = map
-        self.__shape = shape
+    def __init__(self, workspace: Workspace, shape: base.BaseGeometry):
+        self._workspace = workspace
+        self._shape = shape
 
     @classmethod
     def update(cls):
-        for instance in cls.__instances:
+        for instance in cls._instances:
             instance.update_instance()
 
     def update_instance(self):
         pass
 
     @classmethod
-    def new_component(cls, map: Map, workspace: Workspace, shape: base.BaseGeometry):
-        new_component = cls(map, workspace, shape)
-        cls.__instances.append(new_component)
+    def parse_map_raw_data_create_all(cls, data: dict, workspace: Workspace):
+        raise NotImplementedError
+
+    @classmethod
+    def new_component(cls, workspace: Workspace, shape: base.BaseGeometry):
+        # print(dir(cls))
+        new_component = cls(workspace, shape)
+        cls._instances.append(new_component)
 
         return new_component
 
     @staticmethod
     def get_card_icon() -> PhotoImage:
         return PhotoImage(file="src/empty.png")
+
+    @classmethod
+    def get_card_name(cls) -> str:
+        return cls.__name__

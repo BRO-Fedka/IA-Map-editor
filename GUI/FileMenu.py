@@ -19,7 +19,7 @@ class FileMenu(IAMenu):
         self.add_separator()
         self.add_command(label="Exit", command=exit)
 
-    def open(self, event: Optional):
+    def open(self, event=None):
         fp = filedialog.askopenfilename(defaultextension='json')
         if fp != "":
-            self.master.get_workspace().set_map(Map.from_json_file(fp))
+            self.master.get_workspace().set_map(Map.from_json_file(fp,self.master.get_workspace()))

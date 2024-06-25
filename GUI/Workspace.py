@@ -1,10 +1,10 @@
 from tkinter import *
 from typing import *
-from Map.Map import Map
+from Map.IMap import IMap
 
 
 class Workspace(Canvas):
-    __map: Map = None
+    __map: IMap = None
     __zoom: float = 320
     __view_center_x: float = 0
     __view_center_y: float = 0
@@ -26,17 +26,19 @@ class Workspace(Canvas):
         self.bind("<ButtonPress>", self.__on_press)
         self.bind("<ButtonRelease>", self.__on_release)
 
-    def set_map(self, map: Map):
+    def set_map(self, map: IMap):
         self.__map = map
+        self.update_map()
 
     def update_map(self):
         if self.__map is None:
             pass
         else:
-            pass
+            self.__map.update()
 
     def update_content(self):
         self.__grid.update()
+        self.update_map()
 
     def calc_x(self, x: float):
         return (x - self.__view_center_x) * self.__zoom + self.winfo_width() / 2
