@@ -1,5 +1,4 @@
 from Map.MapComponents.MapComponent import *
-from Map.Map import *
 
 
 class PolyMapComponent(MapComponent):

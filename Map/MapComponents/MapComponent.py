@@ -23,9 +23,10 @@ class MapComponent:
 
     def update_instance(self):
         pass
+
     @classmethod
-    def new_component(cls, map: Map, workspace: Workspace):
-        new_component = cls(map, workspace)
+    def new_component(cls, map: Map, workspace: Workspace, shape: base.BaseGeometry):
+        new_component = cls(map, workspace, shape)
         cls.__instances.append(new_component)
 
         return new_component
