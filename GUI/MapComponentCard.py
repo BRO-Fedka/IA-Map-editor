@@ -2,7 +2,7 @@ from Map.MapComponents.MapComponent import *
 
 
 class MapComponentCard(Frame):
-    __map_component: MapComponent = None
+    __map_component: Type[MapComponent] = None
     __photo_image: PhotoImage = None
     __lbl_image: Label = None
     __lbl_name: Label = None
@@ -11,7 +11,7 @@ class MapComponentCard(Frame):
     __selectbg: str = "#0088ff"
     __is_selected: bool = False
 
-    def __init__(self, master: Optional[Misc], map_component: MapComponent, **kwargs):
+    def __init__(self, master: Optional[Misc], map_component: Type[MapComponent], **kwargs):
         self.__map_component = map_component
         if 'selectbg' in kwargs:
             self.__selectbg = kwargs['selectbg']
