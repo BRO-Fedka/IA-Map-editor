@@ -2,9 +2,10 @@ from Map.MapComponents.PolyMapComponent import *
 
 
 class StoneMapComponent(PolyMapComponent):
+    _instances: List = []
 
     def update_instance_ct(self):
-        self._workspace.itemconfig(self._object_id, fill=self._map.get_ct_field('sf'))
+        self._workspace.itemconfig(self._object_id, fill=self._map.get_ct_field('sf'),outline="#000000"*int(self._is_selected), width=2*int(self._is_selected))
 
     @classmethod
     def parse_map_raw_data_create_all(cls, data: dict, workspace: IWorkspace, map:IMap):

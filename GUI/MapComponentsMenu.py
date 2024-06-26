@@ -43,6 +43,7 @@ class MapComponentsMenu(Frame, ICommon):
         self.update_content()
 
     def select(self, card: MapComponentCard):
+        self.get_selected_map_component().remove_all_selections()
         self.__selected_card = card
         children = self.winfo_children()
         for child in children:

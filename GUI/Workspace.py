@@ -3,7 +3,7 @@ from typing import *
 from GUI.InfoBar import *
 from GUI.IWorkspace import *
 from GUI.ICommon import *
-
+import keyboard
 
 class Workspace(Canvas, IWorkspace, ICommon):
     __map: IMap = None
@@ -27,13 +27,12 @@ class Workspace(Canvas, IWorkspace, ICommon):
         self.bind('<Motion>', self.__on_motion)
         self.bind("<ButtonPress>", self.__on_press)
         self.bind("<ButtonRelease>", self.__on_release)
-        self.bind("<Button-1>", self.__on_click)
+        keyboard.add_hotkey('delete',self.__on_del)
 
     def set_map(self, map: IMap):
         self.__map = map
         self.update_map()
         self.__grid.lift()
-        print(self.winfo_toplevel())
         self.master.get_info_widget().update_wh(map.get_wh())
 
     def update_map(self):
@@ -87,24 +86,33 @@ class Workspace(Canvas, IWorkspace, ICommon):
                 self.move_view_pix(self.__prev_cursor_x - event.x, self.__prev_cursor_y - event.y)
                 self.__prev_cursor_x = event.x
                 self.__prev_cursor_y = event.y
+            elif self.__held_button == 3:
+                self.get_mc_menu().get_selected_map_component().move_selected((-self.__prev_cursor_x + event.x)/self.get_zoom(), (-self.__prev_cursor_y + event.y)/self.get_zoom())
+                self.__prev_cursor_x = event.x
+                self.__prev_cursor_y = event.y
 
     def __on_press(self, event):
-        self.__prev_cursor_x = event.x
-        self.__prev_cursor_y = event.y
-        self.__is_cursor_held = True
-        self.__held_button = event.num
-        if event.num == 2:
-            self['cursor'] = 'fleur'
+        self.__on_click(event)
+        if not self.__is_cursor_held:
+            self.__prev_cursor_x = event.x
+            self.__prev_cursor_y = event.y
+            self.__is_cursor_held = True
+            self.__held_button = event.num
+            print(event.num)
+            if event.num == 2:
+                self['cursor'] = 'fleur'
+            elif event.num == 3:
 
+                self['cursor'] = 'plus'
     def __on_release(self, event):
         self.__is_cursor_held = False
+        self['cursor'] = 'crosshair'
         if event.num == 2:
-            self['cursor'] = 'crosshair'
             self.move_view_pix(self.__prev_cursor_x - event.x, self.__prev_cursor_y - event.y)
 
     def __on_click(self, event):
         if event.num == 1:
-            print(*self.get_game_coords_from_pix(event.x, event.y))
+            self.get_mc_menu().get_selected_map_component().select_at_coords(*self.get_game_coords_from_pix(event.x, event.y))
 
     def move_view(self, x: float, y: float):
         self.set_view(self.__view_center_x + x, self.__view_center_y + y)
@@ -128,6 +136,8 @@ class Workspace(Canvas, IWorkspace, ICommon):
         return Coords(x=round((x - (-self.get_view_x() * zoom + self.winfo_width() / 2)) / zoom,2),
                       y=round((y - (-self.get_view_y() * zoom + self.winfo_height() / 2)) / zoom,2))
 
+    def __on_del(self):
+        self.get_mc_menu().get_selected_map_component().delete_selected()
 
 class MapGrid:
     __workspace: Workspace = None
