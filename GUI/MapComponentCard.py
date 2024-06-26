@@ -1,7 +1,9 @@
 from Map.MapComponents.MapComponent import *
+from GUI.IMapComponentCard import *
+from GUI.ICommon import ICommon
 
 
-class MapComponentCard(Frame):
+class MapComponentCard(Frame, IMapComponentCard, ICommon):
     __map_component: Type[MapComponent] = None
     __photo_image: PhotoImage = None
     __lbl_image: Label = None
@@ -70,5 +72,5 @@ class MapComponentCard(Frame):
     def __on_click(self,event):
         self.master.select(self)
 
-    def get_map_component(self) -> MapComponent:
+    def get_map_component(self) -> Type[MapComponent]:
         return self.__map_component

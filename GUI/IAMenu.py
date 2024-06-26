@@ -1,7 +1,7 @@
 from tkinter import *
-from GUI import Workspace
+from GUI import IWorkspace
 
 
 class IAMenu(Menu):
-    def get_workspace(self) -> Workspace:
+    def get_workspace(self) -> IWorkspace:
         return self.master.get_workspace()

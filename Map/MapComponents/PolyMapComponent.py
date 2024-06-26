@@ -4,7 +4,7 @@ from Map.MapComponents.MapComponent import *
 class PolyMapComponent(MapComponent):
     _shape: Polygon = None
 
-    def __init__(self, workspace: Workspace, shape: Polygon, map: IMap):
+    def __init__(self, workspace: IWorkspace, shape: Polygon, map: IMap):
         super().__init__(workspace, shape, map)
         # print(shape.exterior.coords[:])
         self._object_id = workspace.create_polygon(shape.exterior.coords[:], outline="#000000", width=1, tags=type(self).__name__)

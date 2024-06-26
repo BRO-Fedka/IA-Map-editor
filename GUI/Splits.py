@@ -1,9 +1,9 @@
 from tkinter import *
 from typing import *
-import math
+from GUI.ICommon import *
 
 
-class SplitHorizontal(Frame):
+class SplitHorizontal(Frame,ICommon):
     __split_place: float = 0.5
     __is_split_held: bool = False
     __left_item: [Widget, None] = None

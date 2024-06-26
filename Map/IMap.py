@@ -11,3 +11,6 @@ class IMap(Protocol):
 
     def get_ct_field(self, key: str) -> str:
         pass
+
+    def get_wh(self) -> int:
+        pass

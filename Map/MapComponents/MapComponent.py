@@ -1,18 +1,18 @@
 from tkinter import *
-from GUI.Workspace import *
+from GUI.IWorkspace import *
 from shapely.geometry import *
 from shapely.geometry import base
 from Map.IMap import *
 
 
 class MapComponent:
-    _workspace: Workspace = None
+    _workspace: IWorkspace = None
     _object_id: int = None
     _instances: List = []
     _shape: base.BaseGeometry = None
     _map: IMap = None
 
-    def __init__(self, workspace: Workspace, shape: base.BaseGeometry, map: IMap):
+    def __init__(self, workspace: IWorkspace, shape: base.BaseGeometry, map: IMap):
         self._workspace = workspace
         self._shape = shape
         self._map = map
@@ -35,7 +35,7 @@ class MapComponent:
         pass
 
     @classmethod
-    def parse_map_raw_data_create_all(cls, data: dict, workspace: Workspace, map:IMap):
+    def parse_map_raw_data_create_all(cls, data: dict, workspace: IWorkspace, map:IMap):
         raise NotImplementedError
 
     @classmethod
@@ -47,7 +47,7 @@ class MapComponent:
         self._workspace.lift(self._object_id)
 
     @classmethod
-    def new_component(cls, workspace: Workspace, shape: base.BaseGeometry,map: IMap):
+    def new_component(cls, workspace: IWorkspace, shape: base.BaseGeometry,map: IMap):
         # print(dir(cls))
         new_component = cls(workspace, shape,map)
         cls._instances.append(new_component)

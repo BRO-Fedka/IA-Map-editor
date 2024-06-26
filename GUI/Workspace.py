@@ -1,9 +1,11 @@
 from tkinter import *
 from typing import *
-from Map.IMap import IMap
+from GUI.InfoBar import *
+from GUI.IWorkspace import *
+from GUI.ICommon import *
 
 
-class Workspace(Canvas):
+class Workspace(Canvas, IWorkspace, ICommon):
     __map: IMap = None
     __zoom: float = 320
     __view_center_x: float = 0
@@ -25,11 +27,14 @@ class Workspace(Canvas):
         self.bind('<Motion>', self.__on_motion)
         self.bind("<ButtonPress>", self.__on_press)
         self.bind("<ButtonRelease>", self.__on_release)
+        self.bind("<Button-1>", self.__on_click)
 
     def set_map(self, map: IMap):
         self.__map = map
         self.update_map()
         self.__grid.lift()
+        print(self.winfo_toplevel())
+        self.master.get_info_widget().update_wh(map.get_wh())
 
     def update_map(self):
         if self.__map is None:
@@ -74,6 +79,9 @@ class Workspace(Canvas):
         self.update_content()
 
     def __on_motion(self, event):
+        map_x, map_y = self.get_game_coords_from_pix(event.x,event.y)
+        self.get_info_widget().update_x(map_x)
+        self.get_info_widget().update_y(map_y)
         if self.__is_cursor_held:
             if self.__held_button == 2:
                 self.move_view_pix(self.__prev_cursor_x - event.x, self.__prev_cursor_y - event.y)
@@ -84,8 +92,8 @@ class Workspace(Canvas):
         self.__prev_cursor_x = event.x
         self.__prev_cursor_y = event.y
         self.__is_cursor_held = True
+        self.__held_button = event.num
         if event.num == 2:
-            self.__held_button = 2
             self['cursor'] = 'fleur'
 
     def __on_release(self, event):
@@ -93,6 +101,10 @@ class Workspace(Canvas):
         if event.num == 2:
             self['cursor'] = 'crosshair'
             self.move_view_pix(self.__prev_cursor_x - event.x, self.__prev_cursor_y - event.y)
+
+    def __on_click(self, event):
+        if event.num == 1:
+            print(*self.get_game_coords_from_pix(event.x, event.y))
 
     def move_view(self, x: float, y: float):
         self.set_view(self.__view_center_x + x, self.__view_center_y + y)
@@ -110,6 +122,11 @@ class Workspace(Canvas):
 
     def get_view_y(self):
         return self.__view_center_y
+
+    def get_game_coords_from_pix(self, x: int, y: int) -> Coords:
+        zoom = self.get_zoom()
+        return Coords(x=round((x - (-self.get_view_x() * zoom + self.winfo_width() / 2)) / zoom,2),
+                      y=round((y - (-self.get_view_y() * zoom + self.winfo_height() / 2)) / zoom,2))
 
 
 class MapGrid:

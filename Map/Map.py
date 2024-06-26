@@ -9,15 +9,17 @@ from Map.MapComponents.StoneMapComponent import *
 
 
 class Map(IMap):
-    __workspace: Workspace = None
+    __workspace: IWorkspace = None
     __data: Dict = {}
     __available_map_components: List[Type[MapComponent]]
     __ct: Dict[str,str] = None
+    __wh: int = None
 
-    def __init__(self, data: dict, workspace: Workspace):
+    def __init__(self, data: dict, workspace: IWorkspace):
         self.__data = data
         self.__available_map_components = get_finite_inherits(MapComponent)
         self.__ct = data['CT']
+        self.__wh = data['WH']
         for mc in self.__available_map_components:
             mc.parse_map_raw_data_create_all(data,workspace, self)
         self.update_ct()
@@ -37,8 +39,11 @@ class Map(IMap):
     def get_ct_field(self,key:str) -> str:
         return self.__ct[key]
 
+    def get_wh(self) -> int:
+        return self.__wh
+
     @classmethod
-    def from_json_file(cls, fp: str, workspace: Workspace):
+    def from_json_file(cls, fp: str, workspace: IWorkspace):
         with open(fp) as file:
             parsed_json = json.load(file)
         new_map = Map(parsed_json, workspace)

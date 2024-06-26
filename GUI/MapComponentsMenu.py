@@ -1,9 +1,10 @@
 from tkinter import *
 from typing import *
 from GUI.MapComponentCard import *
+from GUI.ICommon import *
 
 
-class MapComponentsMenu(Frame):
+class MapComponentsMenu(Frame, ICommon):
     __card_list: List[MapComponentCard] = []
     __last_amount_of_columns: int = 0
     __last_amount_of_cards: int = 0
@@ -49,7 +50,7 @@ class MapComponentsMenu(Frame):
                 child.unselect()
         card.select()
 
-    def get_selected_map_component(self):
+    def get_selected_map_component(self) -> Type[MapComponent]:
         return self.__selected_card.get_map_component()
 
 
