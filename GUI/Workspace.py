@@ -4,8 +4,16 @@ from GUI.InfoBar import *
 from GUI.IWorkspace import *
 from GUI.ICommon import *
 import keyboard
+import enum
 
-class Workspace(Canvas, IWorkspace, ICommon):
+
+
+MOVE: int = 2
+SELECT: int = 3
+INTERACT: int = 1
+
+
+class Workspace(IWorkspace, ICommon):
     __map: IMap = None
     __zoom: float = 320
     __view_center_x: float = 0
@@ -14,6 +22,7 @@ class Workspace(Canvas, IWorkspace, ICommon):
     __prev_cursor_y: float = 0
     __is_cursor_held: bool = False
     __held_button: int = 0
+    __def_bg: str = "#eee"
 
     def __init__(self, master: Optional[Misc], **kwargs):
         super().__init__(master, kwargs)
@@ -21,13 +30,17 @@ class Workspace(Canvas, IWorkspace, ICommon):
         self['cursor'] = 'crosshair'
         self.__grid: MapGrid = MapGrid(self)
         self.__grid.set_wh(16)
+        try:
+            self.__def_bg = self['bg']
+        except KeyError:
+            pass
         self.update_content()
         self.bind('<MouseWheel>', self.__on_wheel)
         self.bind('<Configure>', self.__on_configure)
         self.bind('<Motion>', self.__on_motion)
         self.bind("<ButtonPress>", self.__on_press)
         self.bind("<ButtonRelease>", self.__on_release)
-        keyboard.add_hotkey('delete',self.__on_del)
+        keyboard.add_hotkey('delete', self.__on_del)
 
     def set_map(self, map: IMap):
         self.__map = map
@@ -37,8 +50,9 @@ class Workspace(Canvas, IWorkspace, ICommon):
 
     def update_map(self):
         if self.__map is None:
-            pass
+            self['bg'] = self.__def_bg
         else:
+            self['bg'] = self.__map.get_ct_field('bg')
             self.__map.update()
 
     def update_content(self):
@@ -78,16 +92,18 @@ class Workspace(Canvas, IWorkspace, ICommon):
         self.update_content()
 
     def __on_motion(self, event):
-        map_x, map_y = self.get_game_coords_from_pix(event.x,event.y)
+        map_x, map_y = self.get_game_coords_from_pix(event.x, event.y)
         self.get_info_widget().update_x(map_x)
         self.get_info_widget().update_y(map_y)
         if self.__is_cursor_held:
-            if self.__held_button == 2:
+            if self.__held_button == MOVE:
                 self.move_view_pix(self.__prev_cursor_x - event.x, self.__prev_cursor_y - event.y)
                 self.__prev_cursor_x = event.x
                 self.__prev_cursor_y = event.y
-            elif self.__held_button == 3:
-                self.get_mc_menu().get_selected_map_component().move_selected((-self.__prev_cursor_x + event.x)/self.get_zoom(), (-self.__prev_cursor_y + event.y)/self.get_zoom())
+            elif self.__held_button == INTERACT:
+                self.get_mc_menu().get_selected_map_component().move_selected(
+                    (-self.__prev_cursor_x + event.x) / self.get_zoom(),
+                    (-self.__prev_cursor_y + event.y) / self.get_zoom())
                 self.__prev_cursor_x = event.x
                 self.__prev_cursor_y = event.y
 
@@ -99,20 +115,22 @@ class Workspace(Canvas, IWorkspace, ICommon):
             self.__is_cursor_held = True
             self.__held_button = event.num
             print(event.num)
-            if event.num == 2:
+            if event.num == MOVE:
                 self['cursor'] = 'fleur'
-            elif event.num == 3:
+            elif event.num == INTERACT:
 
                 self['cursor'] = 'plus'
+
     def __on_release(self, event):
         self.__is_cursor_held = False
         self['cursor'] = 'crosshair'
-        if event.num == 2:
+        if event.num == MOVE:
             self.move_view_pix(self.__prev_cursor_x - event.x, self.__prev_cursor_y - event.y)
 
     def __on_click(self, event):
-        if event.num == 1:
-            self.get_mc_menu().get_selected_map_component().select_at_coords(*self.get_game_coords_from_pix(event.x, event.y))
+        if event.num == SELECT:
+            self.get_mc_menu().get_selected_map_component().select_at_coords(
+                *self.get_game_coords_from_pix(event.x, event.y))
 
     def move_view(self, x: float, y: float):
         self.set_view(self.__view_center_x + x, self.__view_center_y + y)
@@ -133,11 +151,12 @@ class Workspace(Canvas, IWorkspace, ICommon):
 
     def get_game_coords_from_pix(self, x: int, y: int) -> Coords:
         zoom = self.get_zoom()
-        return Coords(x=round((x - (-self.get_view_x() * zoom + self.winfo_width() / 2)) / zoom,2),
-                      y=round((y - (-self.get_view_y() * zoom + self.winfo_height() / 2)) / zoom,2))
+        return Coords(x=round((x - (-self.get_view_x() * zoom + self.winfo_width() / 2)) / zoom, 2),
+                      y=round((y - (-self.get_view_y() * zoom + self.winfo_height() / 2)) / zoom, 2))
 
     def __on_del(self):
         self.get_mc_menu().get_selected_map_component().delete_selected()
+
 
 class MapGrid:
     __workspace: Workspace = None
@@ -148,7 +167,7 @@ class MapGrid:
 
     def __init__(self, workspace: Workspace):
         self.__workspace = workspace
-        self.__border_id = workspace.create_rectangle(0, 0, 0, 0, outline='red', width=2)
+        self.__border_id = workspace.create_rectangle(0, 0, 0, 0, outline='#888', width=2)
 
     def lift(self):
         self.__workspace.lift(self.__border_id)
@@ -161,9 +180,9 @@ class MapGrid:
         self.__workspace.coords(self.__border_id, self.__workspace.calc_x(0), self.__workspace.calc_y(0),
                                 self.__workspace.calc_x(self.__WH), self.__workspace.calc_y(self.__WH))
         while len(self.__vertical_lines_ids) < self.__WH - 1:
-            self.__vertical_lines_ids.append(self.__workspace.create_line(0, 0, 0, 0, fill="red", width=1))
+            self.__vertical_lines_ids.append(self.__workspace.create_line(0, 0, 0, 0, fill="#888", width=1))
         while len(self.__horizontal_lines_ids) < self.__WH - 1:
-            self.__horizontal_lines_ids.append(self.__workspace.create_line(0, 0, 0, 0, fill="red", width=1))
+            self.__horizontal_lines_ids.append(self.__workspace.create_line(0, 0, 0, 0, fill="#888", width=1))
         for i in range(0, len(self.__horizontal_lines_ids)):
             line_x = i + 1
             if i >= self.__WH:

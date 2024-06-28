@@ -5,8 +5,10 @@ import json
 from Map.MapComponents.MapComponent import *
 from Map.MapComponents.PolyMapComponent import *
 from Map.MapComponents.BeachMapComponent import *
+from Map.MapComponents.GrassMapComponent import *
+from Map.MapComponents.CapturePointMapComponent import *
+from Map.MapComponents.BridgeMapComponent import *
 from Map.MapComponents.StoneMapComponent import *
-
 
 class Map(IMap):
     __workspace: IWorkspace = None

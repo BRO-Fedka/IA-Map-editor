@@ -7,7 +7,7 @@ class Coords(NamedTuple):
     y: float
 
 
-class IWorkspace(Protocol):
+class _IWorkspace(Protocol):
     def __init__(self, master: Optional[Misc], **kwargs):
         pass
 
@@ -56,10 +56,12 @@ class IWorkspace(Protocol):
     def get_game_coords_from_pix(self, x: int, y: int) -> Coords:
         pass
 
-    def itemconfig(self, tag_or_id: [int,str], cnf=None, **kw):
+    def itemconfig(self, tag_or_id: [int, str], cnf=None, **kw):
         pass
 
     def lift(self, *args):
         pass
 
 
+class IWorkspace(Canvas,_IWorkspace):
+    pass
