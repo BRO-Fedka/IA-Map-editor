@@ -1,4 +1,5 @@
 from Map.MapComponents.MapComponent import *
+from Workspace.Drafts.BridgeDraft import *
 
 
 class BridgeMapComponent(MapComponent):
@@ -6,6 +7,7 @@ class BridgeMapComponent(MapComponent):
     _border_id: int = None
     _selection_id: int = None
     _base_shape: LineString = None
+    _draft: Type[BridgeDraft] = BridgeDraft
 
     def __init__(self, workspace: IWorkspace, shape: LineString, map: IMap):
         super().__init__(workspace, shape, map)
