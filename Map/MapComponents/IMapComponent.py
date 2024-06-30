@@ -37,7 +37,7 @@ class IMapComponent(Protocol):
         pass
 
     @classmethod
-    def new_component(cls, workspace: IWorkspace, shape: base.BaseGeometry, map: IMap):
+    def new_component(cls, workspace: IWorkspace, shape: base.BaseGeometry, map: IMap, **kwargs):
         pass
 
     @staticmethod

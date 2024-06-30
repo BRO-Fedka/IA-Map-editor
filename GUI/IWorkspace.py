@@ -1,6 +1,6 @@
 from tkinter import *
 from Map.IMap import *
-
+from typing import *
 
 class Coords(NamedTuple):
     x: float
@@ -65,5 +65,15 @@ class _IWorkspace(Protocol):
     def remove_draft(self):
         pass
 
-class IWorkspace(Canvas,_IWorkspace):
+    def update_layers(self):
+        pass
+
+    def get_draft(self) -> Any:
+        pass
+
+    def has_draft(self) -> bool:
+        pass
+
+
+class IWorkspace(Canvas, _IWorkspace):
     pass

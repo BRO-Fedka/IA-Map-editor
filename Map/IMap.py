@@ -1,4 +1,5 @@
 from typing import *
+from GUI.IWorkspace import *
 
 
 class IMap(Protocol):
@@ -14,3 +15,7 @@ class IMap(Protocol):
 
     def get_wh(self) -> int:
         pass
+
+    def update_layer_sequence(self):
+        pass
+

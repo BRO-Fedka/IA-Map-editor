@@ -20,10 +20,11 @@ class Draft:
         self._start_y = y
 
     def complete(self):
-        pass
+        self.delete()
+        self._workspace.update_layers()
 
     def cancel(self):
-        pass
+        self.delete()
 
     def delete(self):
         pass

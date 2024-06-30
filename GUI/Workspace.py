@@ -61,6 +61,10 @@ class Workspace(IWorkspace, ICommon):
         if self.has_draft():
             self.get_draft().update()
 
+    def update_layers(self):
+        self.get_map().update_layer_sequence()
+        self.__grid.lift()
+
     def calc_x(self, x: float):
         return (x - self.__view_center_x) * self.__zoom + self.winfo_width() / 2
 
@@ -136,6 +140,7 @@ class Workspace(IWorkspace, ICommon):
             elif event.num == INTERACT:
                 self.get_draft().interact_btn(*self.get_game_coords_from_pix(event.x, event.y))
         else:
+            print('1-')
             if event.num == SELECT:
                 self.get_mc_menu().get_selected_map_component().select_at_coords(
                     *self.get_game_coords_from_pix(event.x, event.y))
@@ -169,12 +174,14 @@ class Workspace(IWorkspace, ICommon):
         self.get_mc_menu().get_selected_map_component().delete_selected()
 
     def has_draft(self) -> bool:
+        # print('draft',self.__draft)
         if self.__draft is None:
             return False
         else:
+            print(self.get_draft())
             return True
 
-    def get_draft(self) -> Draft:
+    def get_draft(self) -> [Draft, None]:
         return self.__draft
 
     def new_draft(self, x: float, y: float):
@@ -187,4 +194,7 @@ class Workspace(IWorkspace, ICommon):
                                                                                    x, y)
 
     def remove_draft(self):
+        print('!!!!!!')
         self.__draft = None
+        print(self.__draft)
+

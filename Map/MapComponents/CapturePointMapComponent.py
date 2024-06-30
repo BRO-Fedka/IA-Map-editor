@@ -1,26 +1,32 @@
 from Map.MapComponents.MapComponent import *
 import math
+from Workspace.Drafts.CapturePointDraft import *
 
 
-class BridgeMapComponent(MapComponent):
+class CapturePointMapComponent(MapComponent):
     _instances: List = []
     _text_id: int = None
     _base_shape: Point = None
     __d: float = None
-    __char: str = None
+    _char: str = None
+    _draft: Type[CapturePointDraft] = CapturePointDraft
+    _selected_instances:List = []
 
     def __init__(self, workspace: IWorkspace, shape: Point, map: IMap, **kwargs):
         super().__init__(workspace, shape, map)
         self._base_shape = shape
         self.__d = kwargs['d']
-        self.__char = kwargs['char']
-        self._shape = shape.buffer(kwargs['d'])
+        self._char = kwargs['char']
+        self._shape = shape.buffer(kwargs['d']/2)
 
         self._text_id = workspace.create_text((0, 0), fill="red", font=('Arial',
-                                                                            math.ceil(self._workspace.get_zoom() * 160 / 320)),
-                                              tags=type(self).__name__,text=self.__char)
+                                                                        math.ceil(
+                                                                            self._workspace.get_zoom() * 160 / 320)),
+                                              tags=type(self).__name__, text=self._char)
         self._object_id = workspace.create_oval((0, 0, 0, 0), outline="red",
                                                 width=2, tags=type(self).__name__)
+        self.update_instance_ct()
+        self.update_instance()
 
     def update_instance(self):
         self._workspace.coords(self._object_id, (
@@ -58,7 +64,7 @@ class BridgeMapComponent(MapComponent):
             points = data['*']
             for _ in points:
                 print([(_[0], _[1]), (_[2], _[3])])
-                cls.new_component(workspace, Point(_[1], _[2]), map,d=_[3], char =_[0])
+                cls.new_component(workspace, Point(_[1], _[2]), map, d=_[3], char=_[0])
         except KeyError:
             pass
 
@@ -67,8 +73,22 @@ class BridgeMapComponent(MapComponent):
         return PhotoImage(file="src/capture_point.png")
 
     @classmethod
-    def new_component(cls, workspace: IWorkspace, shape: Point, map: IMap,**kwargs):
+    def new_component(cls, workspace: IWorkspace, shape: Point, map: IMap, **kwargs):
         new_component = cls(workspace, shape, map, **kwargs)
         cls._instances.append(new_component)
 
         return new_component
+
+    def lift_instance(self):
+        super().lift_instance()
+        self._workspace.lift(self._text_id)
+
+    @classmethod
+    def get_free_char(cls) -> str:
+        chars = "ABCDEFGHIJKLMNOPQRSTUVWSYZ"
+        for instance in cls._instances:
+            chars = chars.replace(instance._char, "")
+        return chars[0]
+
+    def select(self):
+        super().select()

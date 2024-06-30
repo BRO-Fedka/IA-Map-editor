@@ -17,6 +17,8 @@ class BridgeMapComponent(MapComponent):
                                                 width=self._workspace.get_zoom() * 60 / 320, tags=type(self).__name__)
         self._object_id = workspace.create_line((0, 0, 0, 0), fill="#000000",
                                                 width=self._workspace.get_zoom() * 50 / 320, tags=type(self).__name__)
+        self.update_instance_ct()
+        self.update_instance()
 
     def update_instance(self):
         self._workspace.coords(self._object_id, (
@@ -44,7 +46,6 @@ class BridgeMapComponent(MapComponent):
                                    width=self._workspace.get_zoom() * 60 / 320 + 4 * int(self._is_selected))
         self._workspace.itemconfig(self._border_id, width=self._workspace.get_zoom() * 60 / 320)
         self._workspace.itemconfig(self._object_id, width=self._workspace.get_zoom() * 50 / 320)
-
 
     def delete(self):
         super().delete()
@@ -81,4 +82,7 @@ class BridgeMapComponent(MapComponent):
     def get_card_icon() -> PhotoImage:
         return PhotoImage(file="src/bridge.png")
 
+    def lift_instance(self):
+        self._workspace.lift(self._border_id)
+        super().lift_instance()
 

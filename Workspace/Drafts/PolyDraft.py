@@ -25,10 +25,7 @@ class PolyDraft(Draft):
             self.cancel()
             return
         self._cls.new_component(self._workspace, Polygon(self._coords), self._map)
-        self.delete()
-
-    def cancel(self):
-        self.delete()
+        super().complete()
 
     def interact_btn(self, x: float, y: float):
         self.complete()

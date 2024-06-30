@@ -25,6 +25,7 @@ class MapComponent(IMapComponent):
 
     def delete(self):
         self._workspace.delete(self._object_id)
+        self._instances.remove(self)
 
     def update_instance_ct(self):
         pass
@@ -55,7 +56,7 @@ class MapComponent(IMapComponent):
         self._workspace.lift(self._object_id)
 
     @classmethod
-    def new_component(cls, workspace: IWorkspace, shape: base.BaseGeometry, map: IMap):
+    def new_component(cls, workspace: IWorkspace, shape: base.BaseGeometry, map: IMap,**kwargs):
         new_component = cls(workspace, shape, map)
         cls._instances.append(new_component)
 
@@ -71,7 +72,6 @@ class MapComponent(IMapComponent):
 
     @classmethod
     def select_at_coords(cls, x: float, y: float):
-
         cursor_point = Point(x, y)
         selected_instance = None
         for instance in cls._instances:
