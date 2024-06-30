@@ -1,9 +1,9 @@
-from Map.MapComponents.MapComponent import *
+from Map.MapComponents.IMapComponent import *
 
 
 class IMapComponentCard(Protocol):
 
-    def __init__(self, master: Optional[Misc], map_component: Type[MapComponent], **kwargs):
+    def __init__(self, master: Optional[Misc], map_component: Type[IMapComponent], **kwargs):
         pass
 
     def is_selected(self) -> bool:
@@ -15,5 +15,5 @@ class IMapComponentCard(Protocol):
     def unselect(self):
         pass
 
-    def get_map_component(self) -> Type[MapComponent]:
+    def get_map_component(self) -> Type[IMapComponent]:
         pass

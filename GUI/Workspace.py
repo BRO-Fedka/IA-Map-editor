@@ -1,12 +1,7 @@
-from tkinter import *
-from typing import *
-from GUI.InfoBar import *
-from GUI.IWorkspace import *
+from Workspace.Drafts.Draft import *
+from Workspace.MapGrid import *
 from GUI.ICommon import *
 import keyboard
-import enum
-
-
 
 MOVE: int = 2
 SELECT: int = 3
@@ -14,7 +9,7 @@ INTERACT: int = 1
 
 
 class Workspace(IWorkspace, ICommon):
-    __map: IMap = None
+    __map: [IMap, None] = None
     __zoom: float = 320
     __view_center_x: float = 0
     __view_center_y: float = 0
@@ -23,6 +18,7 @@ class Workspace(IWorkspace, ICommon):
     __is_cursor_held: bool = False
     __held_button: int = 0
     __def_bg: str = "#eee"
+    __draft: [Draft, None] = None
 
     def __init__(self, master: Optional[Misc], **kwargs):
         super().__init__(master, kwargs)
@@ -40,6 +36,7 @@ class Workspace(IWorkspace, ICommon):
         self.bind('<Motion>', self.__on_motion)
         self.bind("<ButtonPress>", self.__on_press)
         self.bind("<ButtonRelease>", self.__on_release)
+        self.bind(f"<Double-Button-{SELECT}>", self.__on_dbl_click)
         keyboard.add_hotkey('delete', self.__on_del)
 
     def set_map(self, map: IMap):
@@ -47,6 +44,9 @@ class Workspace(IWorkspace, ICommon):
         self.update_map()
         self.__grid.lift()
         self.master.get_info_widget().update_wh(map.get_wh())
+
+    def get_map(self) -> IMap:
+        return self.__map
 
     def update_map(self):
         if self.__map is None:
@@ -58,6 +58,8 @@ class Workspace(IWorkspace, ICommon):
     def update_content(self):
         self.__grid.update()
         self.update_map()
+        if self.has_draft():
+            self.get_draft().update()
 
     def calc_x(self, x: float):
         return (x - self.__view_center_x) * self.__zoom + self.winfo_width() / 2
@@ -100,7 +102,7 @@ class Workspace(IWorkspace, ICommon):
                 self.move_view_pix(self.__prev_cursor_x - event.x, self.__prev_cursor_y - event.y)
                 self.__prev_cursor_x = event.x
                 self.__prev_cursor_y = event.y
-            elif self.__held_button == INTERACT:
+            elif self.__held_button == INTERACT and not self.has_draft():
                 self.get_mc_menu().get_selected_map_component().move_selected(
                     (-self.__prev_cursor_x + event.x) / self.get_zoom(),
                     (-self.__prev_cursor_y + event.y) / self.get_zoom())
@@ -117,7 +119,7 @@ class Workspace(IWorkspace, ICommon):
             print(event.num)
             if event.num == MOVE:
                 self['cursor'] = 'fleur'
-            elif event.num == INTERACT:
+            elif event.num == INTERACT and not self.has_draft():
 
                 self['cursor'] = 'plus'
 
@@ -128,9 +130,18 @@ class Workspace(IWorkspace, ICommon):
             self.move_view_pix(self.__prev_cursor_x - event.x, self.__prev_cursor_y - event.y)
 
     def __on_click(self, event):
-        if event.num == SELECT:
-            self.get_mc_menu().get_selected_map_component().select_at_coords(
-                *self.get_game_coords_from_pix(event.x, event.y))
+        if self.has_draft():
+            if event.num == SELECT:
+                self.get_draft().select_btn(*self.get_game_coords_from_pix(event.x, event.y))
+            elif event.num == INTERACT:
+                self.get_draft().interact_btn(*self.get_game_coords_from_pix(event.x, event.y))
+        else:
+            if event.num == SELECT:
+                self.get_mc_menu().get_selected_map_component().select_at_coords(
+                    *self.get_game_coords_from_pix(event.x, event.y))
+
+    def __on_dbl_click(self, event):
+        self.new_draft(*self.get_game_coords_from_pix(event.x, event.y))
 
     def move_view(self, x: float, y: float):
         self.set_view(self.__view_center_x + x, self.__view_center_y + y)
@@ -157,47 +168,23 @@ class Workspace(IWorkspace, ICommon):
     def __on_del(self):
         self.get_mc_menu().get_selected_map_component().delete_selected()
 
+    def has_draft(self) -> bool:
+        if self.__draft is None:
+            return False
+        else:
+            return True
 
-class MapGrid:
-    __workspace: Workspace = None
-    __border_id: int = None
-    __WH: int = 0
-    __vertical_lines_ids: List[int] = []
-    __horizontal_lines_ids: List[int] = []
+    def get_draft(self) -> Draft:
+        return self.__draft
 
-    def __init__(self, workspace: Workspace):
-        self.__workspace = workspace
-        self.__border_id = workspace.create_rectangle(0, 0, 0, 0, outline='#888', width=2)
+    def new_draft(self, x: float, y: float):
+        if self.get_map() is None:
+            return
+        if self.has_draft():
+            self.get_draft().complete()
+        self.__draft = self.get_mc_menu().get_selected_map_component().get_draft()(self.get_map(), self,
+                                                                                   self.get_mc_menu().get_selected_map_component(),
+                                                                                   x, y)
 
-    def lift(self):
-        self.__workspace.lift(self.__border_id)
-        for obj_id in self.__vertical_lines_ids:
-            self.__workspace.lift(obj_id)
-        for obj_id in self.__horizontal_lines_ids:
-            self.__workspace.lift(obj_id)
-
-    def update(self):
-        self.__workspace.coords(self.__border_id, self.__workspace.calc_x(0), self.__workspace.calc_y(0),
-                                self.__workspace.calc_x(self.__WH), self.__workspace.calc_y(self.__WH))
-        while len(self.__vertical_lines_ids) < self.__WH - 1:
-            self.__vertical_lines_ids.append(self.__workspace.create_line(0, 0, 0, 0, fill="#888", width=1))
-        while len(self.__horizontal_lines_ids) < self.__WH - 1:
-            self.__horizontal_lines_ids.append(self.__workspace.create_line(0, 0, 0, 0, fill="#888", width=1))
-        for i in range(0, len(self.__horizontal_lines_ids)):
-            line_x = i + 1
-            if i >= self.__WH:
-                line_x = self.__WH
-            self.__workspace.coords(self.__horizontal_lines_ids[i], self.__workspace.calc_x(line_x),
-                                    self.__workspace.calc_y(0), self.__workspace.calc_x(line_x),
-                                    self.__workspace.calc_y(self.__WH))
-        for i in range(0, len(self.__vertical_lines_ids)):
-            line_y = i + 1
-            if i >= self.__WH:
-                line_y = self.__WH
-            self.__workspace.coords(self.__vertical_lines_ids[i], self.__workspace.calc_x(0),
-                                    self.__workspace.calc_y(line_y), self.__workspace.calc_x(self.__WH),
-                                    self.__workspace.calc_y(line_y))
-
-    def set_wh(self, wh: int = 16):
-        self.__WH = wh
-        self.update()
+    def remove_draft(self):
+        self.__draft = None

@@ -10,11 +10,12 @@ from Map.MapComponents.CapturePointMapComponent import *
 from Map.MapComponents.BridgeMapComponent import *
 from Map.MapComponents.StoneMapComponent import *
 
+
 class Map(IMap):
     __workspace: IWorkspace = None
     __data: Dict = {}
     __available_map_components: List[Type[MapComponent]]
-    __ct: Dict[str,str] = None
+    __ct: Dict[str, str] = None
     __wh: int = None
 
     def __init__(self, data: dict, workspace: IWorkspace):
@@ -23,7 +24,7 @@ class Map(IMap):
         self.__ct = data['CT']
         self.__wh = data['WH']
         for mc in self.__available_map_components:
-            mc.parse_map_raw_data_create_all(data,workspace, self)
+            mc.parse_map_raw_data_create_all(data, workspace, self)
         self.update_ct()
 
     def update_layer_sequence(self):
@@ -38,7 +39,7 @@ class Map(IMap):
         for mc in self.__available_map_components:
             mc.update()
 
-    def get_ct_field(self,key:str) -> str:
+    def get_ct_field(self, key: str) -> str:
         return self.__ct[key]
 
     def get_wh(self) -> int:

@@ -21,5 +21,5 @@ class IMapComponentsMenu(Protocol):
     def select(self, card: IMapComponentCard):
         pass
 
-    def get_selected_map_component(self) -> Type[MapComponent]:
+    def get_selected_map_component(self) -> Type[IMapComponent]:
         pass

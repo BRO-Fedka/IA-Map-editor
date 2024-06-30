@@ -22,7 +22,7 @@ class MapComponentsMenu(Frame, ICommon):
         self.update_content()
 
     def update_content(self):
-        columns_amount = self.winfo_width() // 100
+        columns_amount = self.winfo_width() // 110
         if columns_amount == 0:
             self.after(100,self.update_content)
             return

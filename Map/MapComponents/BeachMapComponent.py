@@ -5,6 +5,7 @@ class BeachMapComponent(PolyMapComponent):
     _instances: List = []
 
     def update_instance_ct(self):
+        print(self._map.get_ct_field('bf'))
         self._workspace.itemconfig(self._object_id, fill=self._map.get_ct_field('bf'),outline="#000000"*int(self._is_selected), width=2*int(self._is_selected))
 
     @classmethod

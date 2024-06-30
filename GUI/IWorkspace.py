@@ -62,6 +62,8 @@ class _IWorkspace(Protocol):
     def lift(self, *args):
         pass
 
+    def remove_draft(self):
+        pass
 
 class IWorkspace(Canvas,_IWorkspace):
     pass

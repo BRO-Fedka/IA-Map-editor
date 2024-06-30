@@ -3,10 +3,12 @@ from GUI.IWorkspace import *
 from shapely.geometry import *
 from shapely.geometry import base
 from Map.IMap import *
+from Map.MapComponents.IMapComponent import *
+from Workspace.Drafts.Draft import *
 import keyboard
 
 
-class MapComponent:
+class MapComponent(IMapComponent):
     _workspace: IWorkspace = None
     _object_id: int = None
     _instances: List = []
@@ -14,6 +16,7 @@ class MapComponent:
     _map: IMap = None
     _selected_instances = []
     _is_selected: bool = False
+    _draft: Type[Draft] = Draft
 
     def __init__(self, workspace: IWorkspace, shape: base.BaseGeometry, map: IMap):
         self._workspace = workspace
@@ -76,7 +79,7 @@ class MapComponent:
                 selected_instance = instance
         if not keyboard.is_pressed('shift'):
             cls.remove_all_selections()
-        if not(selected_instance is None):
+        if not (selected_instance is None):
             selected_instance.select()
             cls._selected_instances.append(selected_instance)
 
@@ -104,9 +107,13 @@ class MapComponent:
         cls._selected_instances = []
 
     @classmethod
-    def move_selected(cls,x:float,y:float):
+    def move_selected(cls, x: float, y: float):
         for instance in cls._selected_instances:
-            instance.move(x,y)
+            instance.move(x, y)
 
-    def move(self, x:float, y:float):
+    def move(self, x: float, y: float):
         pass
+
+    @classmethod
+    def get_draft(cls) -> Type[Draft]:
+        return cls._draft
