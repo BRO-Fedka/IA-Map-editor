@@ -1,6 +1,7 @@
 from Map.MapComponents.MapComponent import *
 import math
 from Workspace.Drafts.CapturePointDraft import *
+from PIL import ImageFont
 
 
 class CapturePointMapComponent(MapComponent):
@@ -42,7 +43,7 @@ class CapturePointMapComponent(MapComponent):
         self.update_instance_scale()
 
     def update_instance_scale(self):
-        self._workspace.itemconfig(self._text_id, font=('Arial', math.ceil(self._workspace.get_zoom() * 120 / 320)))
+        self._workspace.itemconfig(self._text_id, font=('Arial', math.ceil(self._workspace.get_zoom() * 100 / 320)))
         self._workspace.itemconfig(self._object_id, width=2 + 5 * int(self._is_selected))
 
     def delete(self):
@@ -92,3 +93,8 @@ class CapturePointMapComponent(MapComponent):
 
     def select(self):
         super().select()
+
+    def draw_map_instance(self, draw: ImageDraw.Draw, img_wh: int):
+        map_wh = self._map.get_wh()
+        draw.text((round((self._base_shape.x + self.__d/2) / map_wh * img_wh),round((self._base_shape.y - self.__d/2) / map_wh * img_wh)-5), fill=(255, 0, 0), text=self._char)
+        draw.ellipse((round((self._base_shape.x-self.__d/2) / map_wh * img_wh),round((self._base_shape.y-self.__d/2) / map_wh * img_wh),round((self._base_shape.x+self.__d/2 )/ map_wh * img_wh),round((self._base_shape.y+self.__d/2) / map_wh * img_wh)),outline=(255,0,0),width=2)

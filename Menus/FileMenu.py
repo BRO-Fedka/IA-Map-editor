@@ -1,7 +1,7 @@
-from GUI.IAMenu import *
+from Menus.IAMenu import *
 from tkinter import filedialog
-from typing import *
 from Map.Map import *
+from Forms.PreviewForm import *
 
 
 class FileMenu(IAMenu):
@@ -14,12 +14,15 @@ class FileMenu(IAMenu):
         self.add_command(label="Save as")
         self.entryconfig("Save as", state="disabled")
         self.add_separator()
-        self.add_command(label="Preview")
-        self.entryconfig("Preview", state="disabled")
+        self.add_command(label="Preview", command=self.preview)
+        # self.entryconfig("Preview", state="disabled")
         self.add_separator()
         self.add_command(label="Exit", command=exit)
 
     def open(self, event=None):
         fp = filedialog.askopenfilename(defaultextension='json')
         if fp != "":
-            self.master.get_workspace().set_map(Map.from_json_file(fp,self.master.get_workspace()))
+            self.master.get_workspace().set_map(Map.from_json_file(fp, self.master.get_workspace()))
+
+    def preview(self):
+        a = PreviewForm(self)

@@ -19,3 +19,5 @@ class IMap(Protocol):
     def update_layer_sequence(self):
         pass
 
+    def get_preview_image_png(self, wh:Optional[int], blur:Optional[bool]):
+        pass

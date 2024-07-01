@@ -2,7 +2,7 @@ from typing import *
 from shapely.geometry import base
 from Map.IMap import *
 from GUI.IWorkspace import *
-
+from PIL import Image,ImageDraw
 
 class IMapComponent(Protocol):
     def __init__(self, workspace: IWorkspace, shape: base.BaseGeometry, map: IMap):
@@ -78,4 +78,8 @@ class IMapComponent(Protocol):
 
     @classmethod
     def get_draft(cls):
+        pass
+
+    @classmethod
+    def draw_map(cls, draw:ImageDraw.Draw, img_wh: int):
         pass

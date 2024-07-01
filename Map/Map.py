@@ -9,6 +9,8 @@ from Map.MapComponents.GrassMapComponent import *
 from Map.MapComponents.CapturePointMapComponent import *
 from Map.MapComponents.BridgeMapComponent import *
 from Map.MapComponents.StoneMapComponent import *
+from PIL import Image, ImageDraw, ImageFilter
+from functions.functions import hex_to_rgb
 
 
 class Map(IMap):
@@ -51,3 +53,11 @@ class Map(IMap):
             parsed_json = json.load(file)
         new_map = Map(parsed_json, workspace)
         return new_map
+
+    def get_preview_image_png(self, wh: int = 640, blur: bool = False):
+        img = Image.new("RGB", size=(wh, wh), color=hex_to_rgb(self.get_ct_field('bg')))
+        draw = ImageDraw.Draw(img)
+        draw.antialias = True
+        for mc in self.__available_map_components:
+            mc.draw_map(draw, wh)
+        img.filter(ImageFilter.BoxBlur(int(blur))).show()

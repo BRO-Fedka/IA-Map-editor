@@ -1,5 +1,4 @@
-from GUI.IAMenu import *
-from GUI.FileMenu import *
+from Menus.FileMenu import *
 from GUI.ICommon import *
 
 

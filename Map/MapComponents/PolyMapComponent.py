@@ -1,11 +1,13 @@
 from Map.MapComponents.MapComponent import *
 from Workspace.Drafts.PolyDraft import *
+from functions.functions import hex_to_rgb
 
 
 class PolyMapComponent(MapComponent):
     _shape: Polygon = None
     _instances: List = []
     _draft: Type[PolyDraft] = PolyDraft
+    _fill_ct_code = "bg"
 
     def __init__(self, workspace: IWorkspace, shape: Polygon, map: IMap):
         print('!')
@@ -23,10 +25,17 @@ class PolyMapComponent(MapComponent):
         self._workspace.coords(self._object_id, poly_cords)
 
     def move(self, x: float, y: float):
+        def new_coords(coords: tuple):
+            return [coords[0] + x, coords[1] + y]
 
-        def new_coords(coords :tuple):
-            return [coords[0]+x,coords[1]+y]
-
-        self._shape = Polygon(list(map(new_coords,self._shape.exterior.coords[:])))
+        self._shape = Polygon(list(map(new_coords, self._shape.exterior.coords[:])))
         self.update_instance()
 
+    def draw_map_instance(self, draw: ImageDraw.Draw, img_wh: int):
+        map_wh = self._map.get_wh()
+
+        def f(val):
+            return round(val[0] / map_wh * img_wh), round(val[1] / map_wh * img_wh)
+
+        print(list(map(f,self._shape.exterior.coords[:])))
+        draw.polygon(list(map(f,self._shape.exterior.coords[:])),fill=hex_to_rgb(self._map.get_ct_field(self._fill_ct_code)))

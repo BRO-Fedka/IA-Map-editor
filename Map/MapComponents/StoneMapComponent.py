@@ -3,9 +3,21 @@ from Map.MapComponents.PolyMapComponent import *
 
 class StoneMapComponent(PolyMapComponent):
     _instances: List = []
+    _fill_ct_code = "sf"
 
     def update_instance_ct(self):
-        self._workspace.itemconfig(self._object_id, fill=self._map.get_ct_field('sf'),outline="#000000"*int(self._is_selected), width=2*int(self._is_selected))
+        if self._is_selected:
+            self._workspace.itemconfig(self._object_id, fill=self._map.get_ct_field('sf'), outline="#000", width=2)
+        else:
+            self._workspace.itemconfig(self._object_id, fill=self._map.get_ct_field('sf'),
+                                       outline=self._map.get_ct_field('ss'))
+
+    def update_instance(self):
+        super().update_instance()
+        self.update_instance_scale()
+
+    def update_instance_scale(self):
+        self._workspace.itemconfig(self._object_id,width=(self._workspace.get_zoom() * 5 / 320)*int(not self._is_selected)+ 2*int(self._is_selected))
 
     @classmethod
     def parse_map_raw_data_create_all(cls, data: dict, workspace: IWorkspace, map:IMap):

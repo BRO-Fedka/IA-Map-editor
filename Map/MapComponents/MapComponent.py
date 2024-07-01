@@ -56,7 +56,7 @@ class MapComponent(IMapComponent):
         self._workspace.lift(self._object_id)
 
     @classmethod
-    def new_component(cls, workspace: IWorkspace, shape: base.BaseGeometry, map: IMap,**kwargs):
+    def new_component(cls, workspace: IWorkspace, shape: base.BaseGeometry, map: IMap, **kwargs):
         new_component = cls(workspace, shape, map)
         cls._instances.append(new_component)
 
@@ -117,3 +117,11 @@ class MapComponent(IMapComponent):
     @classmethod
     def get_draft(cls) -> Type[Draft]:
         return cls._draft
+
+    def draw_map_instance(self, draw: ImageDraw.Draw, img_wh: int):
+        pass
+
+    @classmethod
+    def draw_map(cls, draw: ImageDraw.Draw, img_wh: int):
+        for instance in cls._instances:
+            instance.draw_map_instance(draw, img_wh)

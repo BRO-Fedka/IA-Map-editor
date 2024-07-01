@@ -2,6 +2,7 @@ from tkinter import *
 from Map.IMap import *
 from typing import *
 
+
 class Coords(NamedTuple):
     x: float
     y: float
@@ -72,6 +73,9 @@ class _IWorkspace(Protocol):
         pass
 
     def has_draft(self) -> bool:
+        pass
+
+    def get_map(self) -> IMap:
         pass
 
 

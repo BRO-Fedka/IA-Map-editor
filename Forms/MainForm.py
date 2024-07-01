@@ -1,4 +1,4 @@
-from GUI.MainMenu import *
+from Menus.MainMenu import *
 from GUI.InfoBar import *
 from GUI.Splits import *
 from GUI.MapComponentsMenu import *

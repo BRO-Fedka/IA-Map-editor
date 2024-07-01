@@ -3,6 +3,7 @@ from Map.MapComponents.PolyMapComponent import *
 
 class BeachMapComponent(PolyMapComponent):
     _instances: List = []
+    _fill_ct_code = "bf"
 
     def update_instance_ct(self):
         print(self._map.get_ct_field('bf'))
