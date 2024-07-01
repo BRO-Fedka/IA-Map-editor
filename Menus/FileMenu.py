@@ -2,12 +2,13 @@ from Menus.IAMenu import *
 from tkinter import filedialog
 from Map.Map import *
 from Forms.PreviewForm import *
+from Forms.NewForm import *
 
 
 class FileMenu(IAMenu):
     def __init__(self):
         super().__init__()
-        self.add_command(label="New")
+        self.add_command(label="New", command=self.new)
         self.add_command(label="Open", command=self.open)
         self.add_command(label="Save")
         self.entryconfig("Save", state="disabled")
@@ -26,3 +27,6 @@ class FileMenu(IAMenu):
 
     def preview(self):
         a = PreviewForm(self)
+
+    def new(self):
+        a = NewForm(self)

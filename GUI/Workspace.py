@@ -54,6 +54,7 @@ class Workspace(IWorkspace, ICommon):
         else:
             self['bg'] = self.__map.get_ct_field('bg')
             self.__map.update()
+            self.__grid.set_wh(self.get_map().get_wh())
 
     def update_content(self):
         self.__grid.update()
@@ -194,7 +195,5 @@ class Workspace(IWorkspace, ICommon):
                                                                                    x, y)
 
     def remove_draft(self):
-        print('!!!!!!')
         self.__draft = None
-        print(self.__draft)
 
