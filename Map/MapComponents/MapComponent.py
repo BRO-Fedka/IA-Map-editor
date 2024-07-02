@@ -17,6 +17,7 @@ class MapComponent(IMapComponent):
     _selected_instances = []
     _is_selected: bool = False
     _draft: Type[Draft] = Draft
+    _mc_char: str = ''
 
     def __init__(self, workspace: IWorkspace, shape: base.BaseGeometry, map: IMap):
         self._workspace = workspace
@@ -25,7 +26,7 @@ class MapComponent(IMapComponent):
 
     def delete(self):
         self._workspace.delete(self._object_id)
-        self._instances.remove(self)
+        # self._instances.remove(self) ??????
 
     def update_instance_ct(self):
         pass
@@ -125,3 +126,28 @@ class MapComponent(IMapComponent):
     def draw_map(cls, draw: ImageDraw.Draw, img_wh: int):
         for instance in cls._instances:
             instance.draw_map_instance(draw, img_wh)
+
+    @classmethod
+    def delete_all(cls):
+        for instance in cls._instances:
+            instance.delete()
+        cls._instances = []
+
+    @classmethod
+    def fill_q(cls, q: Dict[tuple, Dict[str, List[int]]], q_col: Dict[tuple, base.BaseGeometry], wh: int):
+        for x in range(0, wh):
+            for y in range(0, wh):
+                col = q_col[(x, y)]
+                q[x][y][cls._mc_char] = []
+                for instance_id in range(0, len(cls._instances)):
+                    if cls._instances[instance_id].intersects(col):
+                        q[x][y][cls._mc_char].append(instance_id)
+
+    @classmethod
+    def fill_data(cls, map_data: Dict):
+        map_data[cls._mc_char] = []
+        for instance in cls._instances:
+            map_data[cls._mc_char].append(instance.get_as_list())
+
+    def get_as_list(self) -> List:
+        return []

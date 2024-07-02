@@ -21,3 +21,6 @@ class IMap(Protocol):
 
     def get_preview_image_png(self, wh:Optional[int], blur:Optional[bool]):
         pass
+
+    def close(self):
+        pass

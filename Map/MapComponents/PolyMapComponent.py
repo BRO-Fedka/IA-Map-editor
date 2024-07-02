@@ -37,5 +37,9 @@ class PolyMapComponent(MapComponent):
         def f(val):
             return round(val[0] / map_wh * img_wh), round(val[1] / map_wh * img_wh)
 
-        print(list(map(f,self._shape.exterior.coords[:])))
-        draw.polygon(list(map(f,self._shape.exterior.coords[:])),fill=hex_to_rgb(self._map.get_ct_field(self._fill_ct_code)))
+        print(list(map(f, self._shape.exterior.coords[:])))
+        draw.polygon(list(map(f, self._shape.exterior.coords[:])),
+                     fill=hex_to_rgb(self._map.get_ct_field(self._fill_ct_code)))
+
+    def get_as_list(self) -> List:
+        return list(map(list, self._shape.exterior.coords[:]))

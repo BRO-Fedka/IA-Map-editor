@@ -4,6 +4,7 @@ from Map.MapComponents.PolyMapComponent import *
 class BeachMapComponent(PolyMapComponent):
     _instances: List = []
     _fill_ct_code = "gf"
+    _mc_char: str = 'G'
 
     def update_instance_ct(self):
         if self._is_selected:

@@ -40,6 +40,8 @@ class Workspace(IWorkspace, ICommon):
         keyboard.add_hotkey('delete', self.__on_del)
 
     def set_map(self, map: IMap):
+        if not self.__map is None:
+            self.__map.close()
         self.__map = map
         self.update_map()
         self.__grid.lift()

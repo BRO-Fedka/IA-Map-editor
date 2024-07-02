@@ -4,6 +4,7 @@ from Map.MapComponents.PolyMapComponent import *
 class StoneMapComponent(PolyMapComponent):
     _instances: List = []
     _fill_ct_code = "sf"
+    _mc_char: str = 'S'
 
     def update_instance_ct(self):
         if self._is_selected:

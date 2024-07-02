@@ -11,7 +11,8 @@ class CapturePointMapComponent(MapComponent):
     __d: float = None
     _char: str = None
     _draft: Type[CapturePointDraft] = CapturePointDraft
-    _selected_instances:List = []
+    _selected_instances: List = []
+    _mc_char: str = '*'
 
     def __init__(self, workspace: IWorkspace, shape: Point, map: IMap, **kwargs):
         super().__init__(workspace, shape, map)
@@ -98,3 +99,6 @@ class CapturePointMapComponent(MapComponent):
         map_wh = self._map.get_wh()
         draw.text((round((self._base_shape.x + self.__d/2) / map_wh * img_wh),round((self._base_shape.y - self.__d/2) / map_wh * img_wh)-5), fill=(255, 0, 0), text=self._char)
         draw.ellipse((round((self._base_shape.x-self.__d/2) / map_wh * img_wh),round((self._base_shape.y-self.__d/2) / map_wh * img_wh),round((self._base_shape.x+self.__d/2 )/ map_wh * img_wh),round((self._base_shape.y+self.__d/2) / map_wh * img_wh)),outline=(255,0,0),width=2)
+
+    def get_as_list(self) -> List:
+        return [self._char, self._base_shape.x, self._base_shape.y, self.__d]

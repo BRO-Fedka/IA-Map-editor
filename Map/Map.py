@@ -53,7 +53,7 @@ class Map(IMap):
     def from_json_file(cls, fp: str, workspace: IWorkspace):
         with open(fp) as file:
             parsed_json = json.load(file)
-            new_map = Map(parsed_json, workspace, fp = fp)
+            new_map = Map(parsed_json, workspace, fp=fp)
             return new_map
 
     @classmethod
@@ -71,3 +71,37 @@ class Map(IMap):
         for mc in self.__available_map_components:
             mc.draw_map(draw, wh)
         img.filter(ImageFilter.BoxBlur(int(blur))).show()
+
+    def close(self):
+        for mc in self.__available_map_components:
+            print(len(mc._instances))
+            mc.delete_all()
+            print(len(mc._instances))
+
+    def save_to_json_file(self, fp: str = None):
+        if fp is None:
+            if self.__file_path is None:
+                raise ValueError
+            else:
+                fp = self.__file_path
+        else:
+            self.__file_path = fp
+        q = []
+        map_data = {
+            'WH': self.get_wh(),
+            'CT': self.__data['CT']
+        }
+        q_cols = {}
+        for x in range(0, self.get_wh()):
+            q.append([])
+            for y in range(0, self.get_wh()):
+                q[x].append({})
+                q_cols[(x,y)] = Polygon([(x, y), (x + 1, y), (x + 1, y + 1), (x, y + 1)])
+        for mc in self.__available_map_components:
+            mc.fill_q(q, q_cols, self.get_wh())
+            mc.fill_data(map_data)
+        map_data['Q'] = q
+        print(q)
+        print(map_data)
+        with open(self.__file_path, 'w') as file:
+            json.dump(map_data, file)

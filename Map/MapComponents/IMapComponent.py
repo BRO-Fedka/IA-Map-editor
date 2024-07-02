@@ -83,3 +83,18 @@ class IMapComponent(Protocol):
     @classmethod
     def draw_map(cls, draw:ImageDraw.Draw, img_wh: int):
         pass
+
+    @classmethod
+    def delete_all(cls):
+        pass
+
+    @classmethod
+    def fill_q(cls, q: Dict[tuple, Dict[str, List[int]]], q_col: Dict[tuple, base.BaseGeometry], wh:int):
+        pass
+
+    @classmethod
+    def fill_data(cls, map_data: Dict['str',Any]):
+        pass
+
+    def get_as_list(self) -> List:
+        pass

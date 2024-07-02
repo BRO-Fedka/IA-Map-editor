@@ -9,6 +9,7 @@ class BridgeMapComponent(MapComponent):
     _selection_id: int = None
     _base_shape: LineString = None
     _draft: Type[BridgeDraft] = BridgeDraft
+    _mc_char: str = '_'
 
     def __init__(self, workspace: IWorkspace, shape: LineString, map: IMap):
         super().__init__(workspace, shape, map)
@@ -95,3 +96,6 @@ class BridgeMapComponent(MapComponent):
         def f(val):
             return round(val[0] / map_wh * img_wh), round(val[1] / map_wh * img_wh)
         draw.line(list(map(f,self._base_shape.coords[:])),fill=hex_to_rgb(self._map.get_ct_field('b0')),width=round(60 / 320 / map_wh*img_wh))
+
+    def get_as_list(self) -> List:
+        return [self._base_shape.coords[0][0],self._base_shape.coords[0][1],self._base_shape.coords[1][0],self._base_shape.coords[1][1]]
