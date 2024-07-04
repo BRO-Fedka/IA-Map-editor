@@ -99,6 +99,9 @@ class Map(IMap):
         for mc in self.__available_map_components:
             mc.delete_all()
 
+    def get_fp(self):
+        return self.__file_path
+
     def save_to_json_file(self, fp: str = None):
         if fp is None:
             if self.__file_path is None:

@@ -14,3 +14,6 @@ class ICommon:
 
     def get_mc_menu(self) -> IMapComponentsMenu:
         return self.master.get_mc_menu()
+
+    def get_tk(self) -> Tk:
+        return self.master.get_tk()

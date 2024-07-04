@@ -10,6 +10,7 @@ class MainForm(Tk):
         super().__init__()
         self.geometry('640x480')
         self['bg'] = "#ffffff"
+        self.title("IA Map Editor")
         self.option_add("*tearOff", FALSE)
         self.__menu = MainMenu()
         self.config(menu=self.__menu)
@@ -33,3 +34,6 @@ class MainForm(Tk):
     def get_mc_menu(self) -> MapComponentsMenu:
         return self.__map_component_menu
 
+    def get_tk(self) -> Tk:
+        print("got")
+        return self

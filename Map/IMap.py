@@ -36,3 +36,6 @@ class IMap(Protocol):
 
     def save_ct(self, fp: str):
         pass
+
+    def get_fp(self) -> str:
+        pass

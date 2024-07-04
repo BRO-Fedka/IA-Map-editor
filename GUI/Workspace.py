@@ -46,11 +46,19 @@ class Workspace(IWorkspace, ICommon):
         self.update_map()
         self.__grid.lift()
         self.get_info_widget().update_wh(map.get_wh())
+        if map is None:
+            self.get_tk().title("IA Map Editor")
+        else:
+            fp = self.get_map().get_fp()
+            if fp is None:
+                self.get_tk().title('New')
+            else:
+                self.get_tk().title(fp)
 
     def get_map(self) -> IMap:
         return self.__map
 
-    def set_bg(self, color:str):
+    def set_bg(self, color: str):
         self['bg'] = color
 
     def update_map(self):
