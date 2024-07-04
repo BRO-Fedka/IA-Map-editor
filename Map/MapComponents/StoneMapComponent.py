@@ -5,6 +5,7 @@ class StoneMapComponent(PolyMapComponent):
     _instances: List = []
     _fill_ct_code = "sf"
     _mc_char: str = 'S'
+    
     def __init__(self, workspace: IWorkspace, shape: Polygon, map: IMap):
         self._object_z0_id = workspace.create_polygon(shape.exterior.coords[:], outline="#000000", fill='',
                                                       width=2 * int(self._is_selected), tags='shore0')

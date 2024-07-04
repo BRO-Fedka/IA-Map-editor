@@ -30,7 +30,6 @@ class CTColorButton(Button, IField):
             return 'rgba'+str(tuple(self.__color))
 
     def __set_color(self, val: str):
-        print(val)
         if val[0] == '#':
             if self.__color is None:
                 self.__color = [0, 0, 0]
@@ -55,7 +54,6 @@ class CTColorButton(Button, IField):
         cls = self.__color.copy()
         if len(cls)>3:
             cls.pop(3)
-        # print("#%02x%02x%02x" % tuple(cls))
         try:
             self['bg'] = "#%02x%02x%02x" % tuple(cls)
         except:pass

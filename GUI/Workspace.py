@@ -126,7 +126,6 @@ class Workspace(IWorkspace, ICommon):
             self.__prev_cursor_y = event.y
             self.__is_cursor_held = True
             self.__held_button = event.num
-            print(event.num)
             if event.num == MOVE:
                 self['cursor'] = 'fleur'
             elif event.num == INTERACT and not self.has_draft():
@@ -146,7 +145,6 @@ class Workspace(IWorkspace, ICommon):
             elif event.num == INTERACT:
                 self.get_draft().interact_btn(*self.get_game_coords_from_pix(event.x, event.y))
         else:
-            print('1-')
             if event.num == SELECT:
                 self.get_mc_menu().get_selected_map_component().select_at_coords(
                     *self.get_game_coords_from_pix(event.x, event.y))
@@ -180,11 +178,9 @@ class Workspace(IWorkspace, ICommon):
         self.get_mc_menu().get_selected_map_component().delete_selected()
 
     def has_draft(self) -> bool:
-        # print('draft',self.__draft)
         if self.__draft is None:
             return False
         else:
-            print(self.get_draft())
             return True
 
     def get_draft(self) -> [Draft, None]:

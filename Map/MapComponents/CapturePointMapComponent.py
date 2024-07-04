@@ -65,7 +65,6 @@ class CapturePointMapComponent(MapComponent):
         try:
             points = data['*']
             for _ in points:
-                print([(_[0], _[1]), (_[2], _[3])])
                 cls.new_component(workspace, Point(_[1], _[2]), map, d=_[3], char=_[0])
         except KeyError:
             pass

@@ -42,6 +42,5 @@ class PolyDraft(Draft):
         self._workspace.coords(self._object_id, poly_cords)
         self._workspace.coords(self._start_id,
                                [poly_cords[0] - 10, poly_cords[1] - 10, poly_cords[0] + 10, poly_cords[1] + 10])
-        print([poly_cords[-2] - 10, poly_cords[-1] - 10, poly_cords[-2] + 10, poly_cords[-1] + 10])
         self._workspace.coords(self._end_id,
                                [poly_cords[-2] - 10, poly_cords[-1] - 10, poly_cords[-2] + 10, poly_cords[-1] + 10])

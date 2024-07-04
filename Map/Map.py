@@ -50,7 +50,6 @@ class Map(IMap):
     def load_ct(self, fp: str):
         with open(fp) as file:
             parsed_json = json.load(file)
-            print(parsed_json)
             self.__ct = parsed_json['CT']
             self.update_ct()
             self.__workspace.set_bg(self.get_ct_field('bg'))
@@ -123,7 +122,5 @@ class Map(IMap):
             mc.fill_q(q, q_cols, self.get_wh())
             mc.fill_data(map_data)
         map_data['Q'] = q
-        print(q)
-        print(map_data)
         with open(self.__file_path, 'w') as file:
             json.dump(map_data, file)

@@ -17,8 +17,6 @@ class CapturePointDraft(Draft):
 
     def delete(self):
         self._workspace.remove_draft()
-        print(self._workspace.get_draft())
-        print(self._workspace.has_draft())
 
     def complete(self):
         self._cls.new_component(self._workspace, Point(self._coords), self._map, d=0.5, char=self._cls.get_free_char())

@@ -77,7 +77,6 @@ class BridgeMapComponent(MapComponent):
         try:
             list_of_polys = data['_']
             for _ in list_of_polys:
-                print([(_[0], _[1]), (_[2], _[3])])
                 cls.new_component(workspace, LineString([(_[0], _[1]), (_[2], _[3])]), map)
         except KeyError:
             pass

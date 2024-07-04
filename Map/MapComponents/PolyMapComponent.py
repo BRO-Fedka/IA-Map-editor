@@ -10,7 +10,6 @@ class PolyMapComponent(MapComponent):
     _fill_ct_code = "bg"
 
     def __init__(self, workspace: IWorkspace, shape: Polygon, map: IMap):
-        print('!')
         super().__init__(workspace, shape, map)
         self._object_id = workspace.create_polygon(shape.exterior.coords[:], outline="#000000",
                                                    width=2 * int(self._is_selected), tags=type(self).__name__)
@@ -37,7 +36,6 @@ class PolyMapComponent(MapComponent):
         def f(val):
             return round(val[0] / map_wh * img_wh), round(val[1] / map_wh * img_wh)
 
-        print(list(map(f, self._shape.exterior.coords[:])))
         draw.polygon(list(map(f, self._shape.exterior.coords[:])),
                      fill=hex_to_rgb(self._map.get_ct_field(self._fill_ct_code)))
 
