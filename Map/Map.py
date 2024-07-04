@@ -31,8 +31,11 @@ class Map(IMap):
         for mc in self.__available_map_components:
             mc.parse_map_raw_data_create_all(data, workspace, self)
         self.update_ct()
+        self.update_layer_sequence()
 
     def update_layer_sequence(self):
+        self.__workspace.lift('shore0')
+        self.__workspace.lift('shore1')
         for mc in self.__available_map_components:
             mc.lift()
 
