@@ -93,7 +93,7 @@ class IMapComponent(Protocol):
         pass
 
     @classmethod
-    def fill_data(cls, map_data: Dict['str',Any]):
+    def fill_data(cls, map_data: Dict[str,Any]):
         pass
 
     def get_as_list(self) -> List:

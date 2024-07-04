@@ -27,6 +27,7 @@ class Map(IMap):
         self.__available_map_components = get_finite_inherits(MapComponent)
         self.__ct = data['CT']
         self.__wh = data['WH']
+        self.__workspace = workspace
         for mc in self.__available_map_components:
             mc.parse_map_raw_data_create_all(data, workspace, self)
         self.update_ct()
@@ -43,8 +44,28 @@ class Map(IMap):
         for mc in self.__available_map_components:
             mc.update()
 
+    def load_ct(self, fp: str):
+        with open(fp) as file:
+            parsed_json = json.load(file)
+            print(parsed_json)
+            self.__ct = parsed_json['CT']
+            self.update_ct()
+            self.__workspace.set_bg(self.get_ct_field('bg'))
+
+    def save_ct(self, fp: str):
+        with open(self.__file_path, 'w') as file:
+            json.dump({'CD': self.__ct}, file)
+
     def get_ct_field(self, key: str) -> str:
         return self.__ct[key]
+
+    def set_ct_field(self, key: str, val: str):
+        self.__ct[key] = val
+        self.update_ct()
+        self.__workspace.set_bg(self.get_ct_field('bg'))
+
+    def get_ct_copy(self) -> Dict[str, str]:
+        return self.__ct.copy()
 
     def get_wh(self) -> int:
         return self.__wh
@@ -74,9 +95,7 @@ class Map(IMap):
 
     def close(self):
         for mc in self.__available_map_components:
-            print(len(mc._instances))
             mc.delete_all()
-            print(len(mc._instances))
 
     def save_to_json_file(self, fp: str = None):
         if fp is None:
@@ -96,7 +115,7 @@ class Map(IMap):
             q.append([])
             for y in range(0, self.get_wh()):
                 q[x].append({})
-                q_cols[(x,y)] = Polygon([(x, y), (x + 1, y), (x + 1, y + 1), (x, y + 1)])
+                q_cols[(x, y)] = Polygon([(x, y), (x + 1, y), (x + 1, y + 1), (x, y + 1)])
         for mc in self.__available_map_components:
             mc.fill_q(q, q_cols, self.get_wh())
             mc.fill_data(map_data)

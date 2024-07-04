@@ -45,10 +45,13 @@ class Workspace(IWorkspace, ICommon):
         self.__map = map
         self.update_map()
         self.__grid.lift()
-        self.master.get_info_widget().update_wh(map.get_wh())
+        self.get_info_widget().update_wh(map.get_wh())
 
     def get_map(self) -> IMap:
         return self.__map
+
+    def set_bg(self, color:str):
+        self['bg'] = color
 
     def update_map(self):
         if self.__map is None:

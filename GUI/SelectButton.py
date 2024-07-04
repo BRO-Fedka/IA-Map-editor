@@ -1,8 +1,9 @@
 from tkinter import *
 from typing import *
+from GUI.IField import *
 
 
-class SelectButton(Button):
+class SelectButton(Button, IField):
     __vals: List[Any] = None
     __cur_id: int = None
 

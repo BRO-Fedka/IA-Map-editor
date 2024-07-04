@@ -15,6 +15,9 @@ class _IWorkspace(Protocol):
     def set_map(self, map: IMap):
         pass
 
+    def set_bg(self, color: str):
+        pass
+
     def update_map(self):
         pass
 

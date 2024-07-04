@@ -28,7 +28,7 @@ class FileMenu(IAMenu):
     def open(self, event=None):
         fp = filedialog.askopenfilename(defaultextension="json", filetypes=self.__file_types)
         if fp != "":
-            self.master.get_workspace().set_map(Map.from_json_file(fp, self.master.get_workspace()))
+            self.get_workspace().set_map(Map.from_json_file(fp, self.get_workspace()))
 
     def preview(self):
         a = PreviewForm(self)
