@@ -3,7 +3,7 @@ from tkinter import filedialog
 from Map.Map import *
 from Forms.PreviewForm import *
 from Forms.NewForm import *
-
+import sys
 
 class FileMenu(IAMenu):
     __file_types = (
@@ -23,7 +23,7 @@ class FileMenu(IAMenu):
         self.add_command(label="Preview", command=self.preview)
         # self.entryconfig("Preview", state="disabled")
         self.add_separator()
-        self.add_command(label="Exit", command=exit)
+        self.add_command(label="Exit", command=sys.exit)
 
     def open(self, event=None):
         fp = filedialog.askopenfilename(defaultextension="json", filetypes=self.__file_types)
