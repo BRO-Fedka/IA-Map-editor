@@ -34,7 +34,7 @@ class MapComponentCard(Frame, IMapComponentCard, ICommon):
         self.__photo_image = map_component.get_card_icon()
         self.__lbl_image = Label(self, image=self.__photo_image, bg=self.__bg)
         self.__lbl_image.place(x=(100 - self.__photo_image.width())//2-2, y=(100 - self.__photo_image.height())//2-2)
-        self.__lbl_name = Label(self, bg=self.__bg, text=map_component.get_card_name())
+        self.__lbl_name = Label(self, bg=self.__bg, text=map_component.get_card_name(), font=('', 6))
         self.__lbl_name.place(anchor=S, relx=0.5, rely=1)
         self.bind('<Enter>', self.__enter)
         self.bind('<Leave>', self.__leave)

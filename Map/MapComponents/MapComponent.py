@@ -6,6 +6,7 @@ from Map.IMap import *
 from Map.MapComponents.IMapComponent import *
 from Workspace.Drafts.Draft import *
 import keyboard
+import logging
 
 
 class MapComponent(IMapComponent):
@@ -26,7 +27,10 @@ class MapComponent(IMapComponent):
 
     def delete(self):
         self._workspace.delete(self._object_id)
-        # self._instances.remove(self) ??????
+        try:
+            self._instances.remove(self)
+        except:
+            logging.exception('')
 
     def update_instance_ct(self):
         pass
@@ -86,6 +90,17 @@ class MapComponent(IMapComponent):
 
     def intersects(self, shape: base.BaseGeometry) -> bool:
         return self._shape.intersects(shape)
+
+    @classmethod
+    def get_selected_instances(cls) -> List:
+        lst = []
+        for instance in cls._instances:
+            if instance.is_selected():
+                lst.append(instance)
+        return lst
+
+    def is_selected(self) -> bool:
+        return self._is_selected
 
     def select(self):
         self._is_selected = True
@@ -150,4 +165,7 @@ class MapComponent(IMapComponent):
             map_data[cls._mc_char].append(instance.get_as_list())
 
     def get_as_list(self) -> List:
+        return []
+
+    def get_properties(self) -> List[MCProperty]:
         return []

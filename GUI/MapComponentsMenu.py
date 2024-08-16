@@ -50,6 +50,7 @@ class MapComponentsMenu(Frame, ICommon):
             if child != card:
                 child.unselect()
         card.select()
+        self.get_info_widget().hide_properties()
 
     def get_selected_map_component(self) -> Type[MapComponent]:
         return self.__selected_card.get_map_component()

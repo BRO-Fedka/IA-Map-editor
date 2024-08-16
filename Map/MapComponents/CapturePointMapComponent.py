@@ -1,7 +1,8 @@
 from Map.MapComponents.MapComponent import *
 import math
 from Workspace.Drafts.CapturePointDraft import *
-from PIL import ImageFont
+from GUI.PropertyInputs.CharPI import CharPI
+from GUI.PropertyInputs.PositiveFloatPI import PositiveFloatPI
 
 
 class CapturePointMapComponent(MapComponent):
@@ -19,7 +20,7 @@ class CapturePointMapComponent(MapComponent):
         self._base_shape = shape
         self.__d = kwargs['d']
         self._char = kwargs['char']
-        self._shape = shape.buffer(kwargs['d']/2)
+        self._shape = shape.buffer(kwargs['d'] / 2)
 
         self._text_id = workspace.create_text((0, 0), fill="red", font=('Arial',
                                                                         math.ceil(
@@ -53,7 +54,7 @@ class CapturePointMapComponent(MapComponent):
 
     def move(self, x: float, y: float):
         self._base_shape = Point(self._base_shape.x + x, self._base_shape.y + y)
-        self._shape = self._base_shape.buffer(self.__d)
+        self._shape = self._base_shape.buffer(self.__d/2)
         self.update_instance()
 
     def update_instance_ct(self):
@@ -96,8 +97,42 @@ class CapturePointMapComponent(MapComponent):
 
     def draw_map_instance(self, draw: ImageDraw.Draw, img_wh: int):
         map_wh = self._map.get_wh()
-        draw.text((round((self._base_shape.x + self.__d/2) / map_wh * img_wh),round((self._base_shape.y - self.__d/2) / map_wh * img_wh)-5), fill=(255, 0, 0), text=self._char)
-        draw.ellipse((round((self._base_shape.x-self.__d/2) / map_wh * img_wh),round((self._base_shape.y-self.__d/2) / map_wh * img_wh),round((self._base_shape.x+self.__d/2 )/ map_wh * img_wh),round((self._base_shape.y+self.__d/2) / map_wh * img_wh)),outline=(255,0,0),width=2)
+        draw.text((round((self._base_shape.x + self.__d / 2) / map_wh * img_wh),
+                   round((self._base_shape.y - self.__d / 2) / map_wh * img_wh) - 5), fill=(255, 0, 0), text=self._char)
+        draw.ellipse((round((self._base_shape.x - self.__d / 2) / map_wh * img_wh),
+                      round((self._base_shape.y - self.__d / 2) / map_wh * img_wh),
+                      round((self._base_shape.x + self.__d / 2) / map_wh * img_wh),
+                      round((self._base_shape.y + self.__d / 2) / map_wh * img_wh)), outline=(255, 0, 0), width=2)
 
     def get_as_list(self) -> List:
         return [self._char, self._base_shape.x, self._base_shape.y, self.__d]
+
+    def set_char(self, char: str):
+        chars = "ABCDEFGHIJKLMNOPQRSTUVWSYZ"
+        for instance in self._instances:
+            chars = chars.replace(instance._char, "")
+        print(chars)
+        if char in chars:
+            self._char = char
+            self._workspace.itemconfig(self._text_id, text=char)
+
+
+    def get_char(self) -> str:
+        return self._char
+
+    def set_d(self, d: float):
+        self.__d = d
+        if self.__d < 0.1:
+            self.__d = 0.1
+        self.update_instance()
+        self.update_instance_scale()
+        self._base_shape = Point(self._base_shape.x, self._base_shape.y )
+        self._shape = self._base_shape.buffer(self.__d/2)
+    def get_d(self):
+        return self.__d
+
+    def get_properties(self) -> List[MCProperty]:
+        return [
+            MCProperty(CharPI, self.set_char, self.get_char, {}, "Name"),
+            MCProperty(PositiveFloatPI, self.set_d, self.get_d, {}, "Size")
+        ]

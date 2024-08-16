@@ -15,7 +15,7 @@ class CTConfigForm(Toplevel, ICommon):
         kwargs['bg'] = '#ddd'
         super().__init__(master, **kwargs)
         if self.get_workspace().get_map() is None:
-            self.destroy()
+            self.destroy(False)
             return
         self.attributes('-toolwindow', True)
         self.geometry('320x480')
@@ -59,7 +59,8 @@ class CTConfigForm(Toplevel, ICommon):
         for key in self.__data.keys():
             self.__data[key] = self.__fields[key].get()
 
-    def destroy(self):
-        for key in self.__data.keys():
-            self.get_workspace().get_map().set_ct_field(key, self.__data[key])
+    def destroy(self, save_data=True):
+        if save_data:
+            for key in self.__data.keys():
+                self.get_workspace().get_map().set_ct_field(key, self.__data[key])
         super().destroy()

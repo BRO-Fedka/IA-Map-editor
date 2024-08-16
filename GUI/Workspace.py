@@ -23,7 +23,7 @@ class Workspace(IWorkspace, ICommon):
     def __init__(self, master: Optional[Misc], **kwargs):
         super().__init__(master, kwargs)
         self['highlightthickness'] = 0
-        self['cursor'] = 'crosshair'
+        self['cursor'] = 'crosshair red'
         self.__grid: MapGrid = MapGrid(self)
         self.__grid.set_wh(16)
         try:
@@ -40,6 +40,7 @@ class Workspace(IWorkspace, ICommon):
         keyboard.add_hotkey('delete', self.__on_del)
 
     def set_map(self, map: IMap):
+        self.get_info_widget().hide_properties()
         if not self.__map is None:
             self.__map.close()
         self.__map = map
@@ -135,19 +136,21 @@ class Workspace(IWorkspace, ICommon):
             self.__is_cursor_held = True
             self.__held_button = event.num
             if event.num == MOVE:
-                self['cursor'] = 'fleur'
+                self['cursor'] = 'fleur red'
             elif event.num == INTERACT and not self.has_draft():
 
-                self['cursor'] = 'plus'
+                self['cursor'] = 'plus red'
 
     def __on_release(self, event):
         self.__is_cursor_held = False
-        self['cursor'] = 'crosshair'
+        self['cursor'] = 'crosshair red'
         if event.num == MOVE:
             self.move_view_pix(self.__prev_cursor_x - event.x, self.__prev_cursor_y - event.y)
 
     def __on_click(self, event):
+        self.focus_set()
         if self.has_draft():
+            self.get_info_widget().hide_properties()
             if event.num == SELECT:
                 self.get_draft().select_btn(*self.get_game_coords_from_pix(event.x, event.y))
             elif event.num == INTERACT:
@@ -156,6 +159,12 @@ class Workspace(IWorkspace, ICommon):
             if event.num == SELECT:
                 self.get_mc_menu().get_selected_map_component().select_at_coords(
                     *self.get_game_coords_from_pix(event.x, event.y))
+                selected_instances: List[
+                    IMapComponent] = self.get_mc_menu().get_selected_map_component().get_selected_instances()
+                self.get_info_widget().update_selection(len(selected_instances))
+                self.get_info_widget().hide_properties()
+                if len(selected_instances) == 1:
+                    self.get_info_widget().show_properties(selected_instances[0].get_properties())
 
     def __on_dbl_click(self, event):
         self.new_draft(*self.get_game_coords_from_pix(event.x, event.y))
@@ -183,7 +192,9 @@ class Workspace(IWorkspace, ICommon):
                       y=round((y - (-self.get_view_y() * zoom + self.winfo_height() / 2)) / zoom, 2))
 
     def __on_del(self):
-        self.get_mc_menu().get_selected_map_component().delete_selected()
+        if self.focus_get():
+            self.get_mc_menu().get_selected_map_component().delete_selected()
+            self.get_info_widget().hide_properties()
 
     def has_draft(self) -> bool:
         if self.__draft is None:
@@ -205,4 +216,3 @@ class Workspace(IWorkspace, ICommon):
 
     def remove_draft(self):
         self.__draft = None
-

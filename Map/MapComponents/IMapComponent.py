@@ -2,7 +2,9 @@ from typing import *
 from shapely.geometry import base
 from Map.IMap import *
 from GUI.IWorkspace import *
-from PIL import Image,ImageDraw
+from PIL import Image, ImageDraw
+from Map.MapComponents.MCProperty import MCProperty
+
 
 class IMapComponent(Protocol):
     def __init__(self, workspace: IWorkspace, shape: base.BaseGeometry, map: IMap):
@@ -55,7 +57,14 @@ class IMapComponent(Protocol):
     def intersects(self, shape: base.BaseGeometry) -> bool:
         pass
 
+    @classmethod
+    def get_selected_instances(cls) -> List:
+        pass
+
     def select(self):
+        pass
+
+    def is_selected(self) -> bool:
         pass
 
     def unselect(self):
@@ -97,4 +106,7 @@ class IMapComponent(Protocol):
         pass
 
     def get_as_list(self) -> List:
+        pass
+
+    def get_properties(self) -> List[MCProperty]:
         pass
