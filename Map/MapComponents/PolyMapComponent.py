@@ -1,6 +1,10 @@
 from Map.MapComponents.MapComponent import *
 from Workspace.Drafts.PolyDraft import *
 from functions.functions import hex_to_rgb
+from Workspace.Drafts.PolySquareDraft import PolySquareDraft
+from Workspace.Drafts.PolyDraft import PolyDraft
+from Workspace.Drafts.PolySquareGridOrientedDraft import PolySquareGridOrientedDraft
+import keyboard
 
 
 class PolyMapComponent(MapComponent):
@@ -41,3 +45,12 @@ class PolyMapComponent(MapComponent):
 
     def get_as_list(self) -> List:
         return list(map(list, self._shape.exterior.coords[:]))
+
+    @classmethod
+    def get_draft(cls) -> Type[Draft]:
+        if keyboard.is_pressed('shift'):
+            return PolySquareDraft
+        elif keyboard.is_pressed('ctrl'):
+            return PolySquareGridOrientedDraft
+        else:
+            return PolyDraft

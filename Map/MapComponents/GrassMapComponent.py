@@ -1,7 +1,7 @@
 from Map.MapComponents.PolyMapComponent import *
 
 
-class BeachMapComponent(PolyMapComponent):
+class GrassMapComponent(PolyMapComponent):
     _instances: List = []
     _fill_ct_code = "gf"
     _mc_char: str = 'G'

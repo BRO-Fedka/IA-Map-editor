@@ -4,7 +4,7 @@ from tkinter.messagebox import showwarning
 from GUI.SelectButton import *
 from Map.Map import *
 import os
-
+import logging
 
 class NewForm(Toplevel, ICommon):
     def __init__(self, master, **kwargs):
@@ -37,4 +37,4 @@ class NewForm(Toplevel, ICommon):
             self.master.get_workspace().set_map(Map.new_map(int(self.__txt_wh.get()), 'CTs\\'+self.__cbx_ct.get(),  self.master.get_workspace()))
             self.destroy()
         except:
-            pass
+            logging.exception('')

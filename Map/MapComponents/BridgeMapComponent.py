@@ -1,5 +1,5 @@
 from Map.MapComponents.MapComponent import *
-from Workspace.Drafts.BridgeDraft import *
+from Workspace.Drafts.SingeLineDraft import *
 from functions.functions import hex_to_rgb
 
 
@@ -8,7 +8,7 @@ class BridgeMapComponent(MapComponent):
     _border_id: int = None
     _selection_id: int = None
     _base_shape: LineString = None
-    _draft: Type[BridgeDraft] = BridgeDraft
+    _draft: Type[SingeLineDraft] = SingeLineDraft
     _mc_char: str = '_'
 
     def __init__(self, workspace: IWorkspace, shape: LineString, map: IMap):

@@ -3,12 +3,16 @@ from Map.IMap import *
 from functions.functions import *
 import json
 from Map.MapComponents.MapComponent import *
-from Map.MapComponents.PolyMapComponent import *
-from Map.MapComponents.BeachMapComponent import *
-from Map.MapComponents.GrassMapComponent import *
-from Map.MapComponents.CapturePointMapComponent import *
-from Map.MapComponents.BridgeMapComponent import *
-from Map.MapComponents.StoneMapComponent import *
+from Map.MapComponents.PolyMapComponent import PolyMapComponent
+from Map.MapComponents.BeachMapComponent import BeachMapComponent
+from Map.MapComponents.GrassMapComponent import GrassMapComponent
+from Map.MapComponents.RoadMapComponent import RoadMapComponent
+from Map.MapComponents.BridgeMapComponent import BridgeMapComponent
+from Map.MapComponents.ConcreteMapComponent import ConcreteMapComponent
+from Map.MapComponents.StoneMapComponent import StoneMapComponent
+from Map.MapComponents.CapturePointMapComponent import CapturePointMapComponent
+
+
 from PIL import Image, ImageDraw, ImageFilter
 from functions.functions import hex_to_rgb
 
@@ -59,7 +63,11 @@ class Map(IMap):
             json.dump({'CD': self.__ct}, file)
 
     def get_ct_field(self, key: str) -> str:
-        return self.__ct[key]
+        try:
+            return self.__ct[key]
+        except KeyError:
+            self.__ct[key] = '#000'
+            return '#000'
 
     def set_ct_field(self, key: str, val: str):
         self.__ct[key] = val
