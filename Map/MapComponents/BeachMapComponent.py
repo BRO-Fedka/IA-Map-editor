@@ -20,6 +20,7 @@ class BeachMapComponent(PolyMapComponent):
         # self._instances.remove(self) ??????
 
     def update_instance_ct(self):
+        super().update_instance_ct()
         if self._is_selected:
             self._workspace.itemconfig(self._object_id, fill=self._map.get_ct_field('bf'), outline="#000", width=2)
         else:

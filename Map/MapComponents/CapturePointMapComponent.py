@@ -96,9 +96,6 @@ class CapturePointMapComponent(MapComponent):
             chars = chars.replace(instance._char, "")
         return chars[0]
 
-    def select(self):
-        super().select()
-
     def draw_map_instance_image_draw(self, draw: ImageDraw.Draw, img_wh: int):
         map_wh = self._map.get_wh()
         draw.text((round((self._base_shape.x + self.__d / 2) / map_wh * img_wh),

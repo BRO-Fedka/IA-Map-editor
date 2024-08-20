@@ -62,7 +62,7 @@ class IMapComponent(Protocol):
     def get_selected_instances(cls) -> List:
         pass
 
-    def select(self):
+    def select(self, x: float, y: float):
         pass
 
     def is_selected(self) -> bool:

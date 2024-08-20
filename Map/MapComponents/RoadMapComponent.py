@@ -2,6 +2,7 @@ from Map.MapComponents.MapComponent import *
 from functions.functions import hex_to_rgb
 from Workspace.Drafts.LinesSequenceDraft import *
 from svgwrite.shapes import Polyline as SVG_Polygon
+import math
 
 
 class RoadMapComponent(MapComponent):
@@ -26,7 +27,12 @@ class RoadMapComponent(MapComponent):
         for coord in shape.coords[:]:
             self._joints_ids.append(workspace.create_oval(coord[0] - 1, coord[1] - 1, coord[0] + 1, coord[1] + 1,
                                                           fill="#000000", tags=type(self).__name__, width=0))
-
+        self._selected_coords: Set[int] = set()
+        self._selected_coords_ids: List[int] = []
+        for coord in shape.coords[:]:
+            self._selected_coords_ids.append(
+                workspace.create_oval(coord[0] - 5, coord[1] - 5, coord[0] + 5, coord[1] + 5, fill='red',
+                                      tags='markers', state='hidden'))
         self.update_instance_ct()
         self.update_instance()
 
@@ -41,6 +47,12 @@ class RoadMapComponent(MapComponent):
                 self._workspace.itemconfig(self._objects_ids[coord], fill=self._map.get_ct_field('cs'))
             for joint in self._joints_ids:
                 self._workspace.itemconfig(joint, fill=self._map.get_ct_field('cs'))
+
+        for coord in range(0, len(self._base_shape.coords[:])):
+            if coord in self._selected_coords:
+                self._workspace.itemconfig(self._selected_coords_ids[coord], state='normal')
+            else:
+                self._workspace.itemconfig(self._selected_coords_ids[coord], state='hidden')
 
     def update_instance(self):
         for coord in range(0, len(self._base_shape.coords[:]) - 1):
@@ -57,6 +69,12 @@ class RoadMapComponent(MapComponent):
                                    self._workspace.calc_x(self._base_shape.coords[:][coord][0] + 20 / 320),
                                    self._workspace.calc_y(self._base_shape.coords[:][coord][1] + 20 / 320),
                                    )
+            self._workspace.coords(self._selected_coords_ids[coord],
+                                   self._workspace.calc_x(self._base_shape.coords[:][coord][0]) - 5,
+                                   self._workspace.calc_y(self._base_shape.coords[:][coord][1]) - 5,
+                                   self._workspace.calc_x(self._base_shape.coords[:][coord][0]) + 5,
+                                   self._workspace.calc_y(self._base_shape.coords[:][coord][1]) + 5
+                                   )
 
         self.update_instance_scale()
 
@@ -65,12 +83,25 @@ class RoadMapComponent(MapComponent):
             self._workspace.itemconfig(self._objects_ids[coord], width=(self._workspace.get_zoom() * 40 / 320))
 
     def move(self, x: float, y: float):
-        def new_coords(coords: tuple):
-            return [coords[0] + x, coords[1] + y]
+        if len(self._selected_coords) == 0:
+            def new_coords(coords: tuple):
+                return [coords[0] + x, coords[1] + y]
 
-        self._base_shape = LineString(list(map(new_coords, self._base_shape.coords[:])))
-        self._shape = self._base_shape.buffer(20 / 320)
-        self.update_instance()
+            self._base_shape = LineString(list(map(new_coords, self._base_shape.coords[:])))
+
+        else:
+            print(self._selected_coords)
+            n_coords = []
+            for coord in range(0, len(self._base_shape.coords[:])):
+                if coord in self._selected_coords:
+                    n_coords.append([self._base_shape.coords[:][coord][0] + x / len(self._selected_coords),
+                                     self._base_shape.coords[:][coord][1] + y / len(self._selected_coords)])
+                else:
+                    n_coords.append(
+                        [self._base_shape.coords[:][coord][0], self._base_shape.coords[:][coord][1]])
+            self._base_shape = LineString(n_coords)
+            self._shape = self._base_shape.buffer(20 / 320)
+            self.update_instance()
 
     def draw_map_instance_image_draw(self, draw: ImageDraw.Draw, img_wh: int):
         map_wh = self._map.get_wh()
@@ -114,8 +145,26 @@ class RoadMapComponent(MapComponent):
             self._workspace.lift(id)
 
     def delete(self):
-        super().delete()
+
         for id in self._objects_ids:
             self._workspace.delete(id)
         for id in self._joints_ids:
             self._workspace.delete(id)
+        for index in self._selected_coords_ids:
+            self._workspace.delete(index)
+        super().delete()
+
+    def unselect(self):
+        self._selected_coords = set()
+        super().unselect()
+
+    def select(self, x: float, y: float):
+        if not keyboard.is_pressed('shift'):
+            self._selected_coords = set()
+
+        for coord in range(0, len(self._base_shape.coords[:])):
+            if math.sqrt((self._base_shape.coords[:][coord][0] - x) ** 2 + (
+                    self._base_shape.coords[:][coord][1] - y) ** 2) < 20 / 320:
+                self._selected_coords.add(coord)
+        if len(self._selected_coords) > 0 or Point(x, y).intersects(self._base_shape):
+            super().select(x, y)

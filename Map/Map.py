@@ -47,6 +47,7 @@ class Map(IMap):
         self.__workspace.lift('shore1')
         for mc in self.__available_map_components:
             mc.lift()
+        self.__workspace.lift('markers')
 
     def update_ct(self):
         for mc in self.__available_map_components:

@@ -9,6 +9,7 @@ import keyboard
 import logging
 from svgwrite import Drawing
 
+
 class MapComponent(IMapComponent):
     _workspace: IWorkspace = None
     _object_id: int = None
@@ -85,7 +86,7 @@ class MapComponent(IMapComponent):
         if not keyboard.is_pressed('shift'):
             cls.remove_all_selections()
         if not (selected_instance is None):
-            selected_instance.select()
+            selected_instance.select(x, y)
             cls._selected_instances.append(selected_instance)
 
     def intersects(self, shape: base.BaseGeometry) -> bool:
@@ -102,7 +103,7 @@ class MapComponent(IMapComponent):
     def is_selected(self) -> bool:
         return self._is_selected
 
-    def select(self):
+    def select(self, x: float, y: float):
         self._is_selected = True
         self.update_instance_ct()
 
