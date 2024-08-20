@@ -209,8 +209,8 @@ class Workspace(IWorkspace, ICommon):
         if self.get_map() is None:
             return
         if self.has_draft():
-            self.get_draft().complete()
-        self.__draft = self.get_mc_menu().get_selected_map_component().get_draft()(self.get_map(), self,
+            self.get_draft().delete()
+        self.__draft = self.get_mc_menu().get_selected_map_component().get_draft().new_draft(self.get_map(), self,
                                                                                    self.get_mc_menu().get_selected_map_component(),
                                                                                    x, y)
 

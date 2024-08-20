@@ -12,6 +12,10 @@ class Draft:
     _start_x: float = None
     _start_y: float = None
 
+    @classmethod
+    def new_draft(cls, map: IMap, workspace: IWorkspace, cl: IMapComponent, x: float, y: float) -> Any:
+        return cls(map,workspace,cl,x,y)
+
     def __init__(self, map: IMap, workspace: IWorkspace, cls: IMapComponent, x: float, y: float):
         self._cls = cls
         self._map = map
