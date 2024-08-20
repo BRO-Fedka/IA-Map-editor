@@ -26,8 +26,8 @@ class MapComponent(IMapComponent):
         self._map = map
 
     def delete(self):
-        self._workspace.delete(self._object_id)
         try:
+            self._workspace.delete(self._object_id)
             self._instances.remove(self)
         except:
             logging.exception('')

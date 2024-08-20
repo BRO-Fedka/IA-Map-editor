@@ -11,6 +11,7 @@ from Map.MapComponents.BridgeMapComponent import BridgeMapComponent
 from Map.MapComponents.ConcreteMapComponent import ConcreteMapComponent
 from Map.MapComponents.StoneMapComponent import StoneMapComponent
 from Map.MapComponents.CapturePointMapComponent import CapturePointMapComponent
+from Map.MapComponents.VehicleDummyMapComponent import VehicleDummyMapComponent
 
 
 from PIL import Image, ImageDraw, ImageFilter

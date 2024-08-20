@@ -1,7 +1,7 @@
 from Workspace.Drafts.Draft import *
 
 
-class CapturePointDraft(Draft):
+class SinglePointDraft(Draft):
     _coords: tuple = None
     _start_id: int = None
     _end_id: int = None
@@ -19,6 +19,6 @@ class CapturePointDraft(Draft):
         self._workspace.remove_draft()
 
     def complete(self):
-        self._cls.new_component(self._workspace, Point(self._coords), self._map, d=0.5, char=self._cls.get_free_char())
+        self._cls.new_component(self._workspace, Point(self._coords), self._map)
         super().complete()
 

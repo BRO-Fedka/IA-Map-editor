@@ -1,6 +1,6 @@
 from Map.MapComponents.MapComponent import *
 import math
-from Workspace.Drafts.CapturePointDraft import *
+from Workspace.Drafts.SinglePointDraft import *
 from GUI.PropertyInputs.CharPI import CharPI
 from GUI.PropertyInputs.PositiveFloatPI import PositiveFloatPI
 
@@ -11,7 +11,7 @@ class CapturePointMapComponent(MapComponent):
     _base_shape: Point = None
     __d: float = None
     _char: str = None
-    _draft: Type[CapturePointDraft] = CapturePointDraft
+    _draft: Type[SinglePointDraft] = SinglePointDraft
     _selected_instances: List = []
     _mc_char: str = '*'
 
@@ -54,7 +54,7 @@ class CapturePointMapComponent(MapComponent):
 
     def move(self, x: float, y: float):
         self._base_shape = Point(self._base_shape.x + x, self._base_shape.y + y)
-        self._shape = self._base_shape.buffer(self.__d/2)
+        self._shape = self._base_shape.buffer(self.__d / 2)
         self.update_instance()
 
     def update_instance_ct(self):
@@ -76,6 +76,8 @@ class CapturePointMapComponent(MapComponent):
 
     @classmethod
     def new_component(cls, workspace: IWorkspace, shape: Point, map: IMap, **kwargs):
+        kwargs['d'] = 0.5
+        kwargs['char'] = cls.get_free_char()
         new_component = cls(workspace, shape, map, **kwargs)
         cls._instances.append(new_component)
 
@@ -116,7 +118,6 @@ class CapturePointMapComponent(MapComponent):
             self._char = char
             self._workspace.itemconfig(self._text_id, text=char)
 
-
     def get_char(self) -> str:
         return self._char
 
@@ -126,8 +127,9 @@ class CapturePointMapComponent(MapComponent):
             self.__d = 0.1
         self.update_instance()
         self.update_instance_scale()
-        self._base_shape = Point(self._base_shape.x, self._base_shape.y )
-        self._shape = self._base_shape.buffer(self.__d/2)
+        self._base_shape = Point(self._base_shape.x, self._base_shape.y)
+        self._shape = self._base_shape.buffer(self.__d / 2)
+
     def get_d(self):
         return self.__d
 
