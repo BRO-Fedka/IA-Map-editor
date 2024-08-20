@@ -1,6 +1,7 @@
 from Map.MapComponents.MapComponent import *
 from functions.functions import hex_to_rgb
 from Workspace.Drafts.LinesSequenceDraft import *
+from svgwrite.shapes import Polyline as SVG_Polygon
 
 
 class RoadMapComponent(MapComponent):
@@ -71,14 +72,24 @@ class RoadMapComponent(MapComponent):
         self._shape = self._base_shape.buffer(20 / 320)
         self.update_instance()
 
-    def draw_map_instance(self, draw: ImageDraw.Draw, img_wh: int):
+    def draw_map_instance_image_draw(self, draw: ImageDraw.Draw, img_wh: int):
         map_wh = self._map.get_wh()
 
         def f(val):
             return round(val[0] / map_wh * img_wh), round(val[1] / map_wh * img_wh)
 
-        draw.line(list(map(f, self._shape.coords[:])),
-                  fill=hex_to_rgb(self._map.get_ct_field(self._fill_ct_code)))
+        draw.line(list(map(f, self._base_shape.coords[:])),
+                  fill=hex_to_rgb(self._map.get_ct_field(self._fill_ct_code)), width=round(40 / 320 / map_wh * img_wh))
+
+    def draw_map_instance_svgwrite(self, draw: Drawing, img_wh: int):
+        map_wh = self._map.get_wh()
+
+        def f(val):
+            return (val[0] / map_wh * img_wh), (val[1] / map_wh * img_wh)
+
+        poly = draw.add(SVG_Polygon(list(map(f, self._base_shape.coords[:]))))
+        poly.stroke(self._map.get_ct_field('cs'), width=40 / 320 / map_wh * img_wh)
+        poly.fill('none')
 
     def get_as_list(self) -> List:
         return list(map(list, self._base_shape.coords[:]))

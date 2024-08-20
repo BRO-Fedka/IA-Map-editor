@@ -5,6 +5,7 @@ from Workspace.Drafts.PolySquareDraft import PolySquareDraft
 from Workspace.Drafts.PolyDraft import PolyDraft
 from Workspace.Drafts.PolySquareGridOrientedDraft import PolySquareGridOrientedDraft
 import keyboard
+from svgwrite.shapes import Polygon as SVG_Polygon
 
 
 class PolyMapComponent(MapComponent):
@@ -34,7 +35,7 @@ class PolyMapComponent(MapComponent):
         self._shape = Polygon(list(map(new_coords, self._shape.exterior.coords[:])))
         self.update_instance()
 
-    def draw_map_instance(self, draw: ImageDraw.Draw, img_wh: int):
+    def draw_map_instance_image_draw(self, draw: ImageDraw.Draw, img_wh: int):
         map_wh = self._map.get_wh()
 
         def f(val):
@@ -42,6 +43,15 @@ class PolyMapComponent(MapComponent):
 
         draw.polygon(list(map(f, self._shape.exterior.coords[:])),
                      fill=hex_to_rgb(self._map.get_ct_field(self._fill_ct_code)))
+
+    def draw_map_instance_svgwrite(self, draw: Drawing, img_wh: int):
+        map_wh = self._map.get_wh()
+
+        def f(val):
+            return (val[0] / map_wh * img_wh), (val[1] / map_wh * img_wh)
+
+        poly = draw.add(SVG_Polygon(list(map(f, self._shape.exterior.coords[:]))))
+        poly.fill(self._map.get_ct_field(self._fill_ct_code))
 
     def get_as_list(self) -> List:
         return list(map(list, self._shape.exterior.coords[:]))

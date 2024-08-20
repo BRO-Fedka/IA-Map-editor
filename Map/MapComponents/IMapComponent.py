@@ -4,6 +4,7 @@ from Map.IMap import *
 from GUI.IWorkspace import *
 from PIL import Image, ImageDraw
 from Map.MapComponents.MCProperty import MCProperty
+from svgwrite import Drawing
 
 
 class IMapComponent(Protocol):
@@ -89,8 +90,18 @@ class IMapComponent(Protocol):
     def get_draft(cls):
         pass
 
+    def draw_map_instance_image_draw(self, draw: ImageDraw.Draw, img_wh: int):
+        pass
+
+    def draw_map_instance_svgwrite(self, draw: Drawing, img_wh: int):
+        pass
+
     @classmethod
-    def draw_map(cls, draw:ImageDraw.Draw, img_wh: int):
+    def draw_map_image_draw(cls, draw: ImageDraw.Draw, img_wh: int):
+        pass
+
+    @classmethod
+    def draw_map_svgwrite(cls, draw: Drawing, img_wh: int):
         pass
 
     @classmethod
@@ -98,11 +109,11 @@ class IMapComponent(Protocol):
         pass
 
     @classmethod
-    def fill_q(cls, q: Dict[tuple, Dict[str, List[int]]], q_col: Dict[tuple, base.BaseGeometry], wh:int):
+    def fill_q(cls, q: Dict[tuple, Dict[str, List[int]]], q_col: Dict[tuple, base.BaseGeometry], wh: int):
         pass
 
     @classmethod
-    def fill_data(cls, map_data: Dict[str,Any]):
+    def fill_data(cls, map_data: Dict[str, Any]):
         pass
 
     def get_as_list(self) -> List:

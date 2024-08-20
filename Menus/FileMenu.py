@@ -20,18 +20,13 @@ class FileMenu(IAMenu):
         self.add_command(label="Save as", command=self.save_as)
         # self.entryconfig("Save as", state="disabled")
         self.add_separator()
-        self.add_command(label="Preview", command=self.preview)
         # self.entryconfig("Preview", state="disabled")
-        self.add_separator()
         self.add_command(label="Exit", command=sys.exit)
 
     def open(self, event=None):
         fp = filedialog.askopenfilename(defaultextension="json", filetypes=self.__file_types)
         if fp != "":
             self.get_workspace().set_map(Map.from_json_file(fp, self.get_workspace()))
-
-    def preview(self):
-        a = PreviewForm(self)
 
     def new(self):
         a = NewForm(self)

@@ -7,7 +7,7 @@ from Map.MapComponents.IMapComponent import *
 from Workspace.Drafts.Draft import *
 import keyboard
 import logging
-
+from svgwrite import Drawing
 
 class MapComponent(IMapComponent):
     _workspace: IWorkspace = None
@@ -134,13 +134,21 @@ class MapComponent(IMapComponent):
     def get_draft(cls) -> Type[Draft]:
         return cls._draft
 
-    def draw_map_instance(self, draw: ImageDraw.Draw, img_wh: int):
+    def draw_map_instance_image_draw(self, draw: ImageDraw.Draw, img_wh: int):
+        pass
+
+    def draw_map_instance_svgwrite(self, draw: Drawing, img_wh: int):
         pass
 
     @classmethod
-    def draw_map(cls, draw: ImageDraw.Draw, img_wh: int):
+    def draw_map_image_draw(cls, draw: ImageDraw.Draw, img_wh: int):
         for instance in cls._instances:
-            instance.draw_map_instance(draw, img_wh)
+            instance.draw_map_instance_image_draw(draw, img_wh)
+
+    @classmethod
+    def draw_map_svgwrite(cls, draw: Drawing, img_wh: int):
+        for instance in cls._instances:
+            instance.draw_map_instance_svgwrite(draw, img_wh)
 
     @classmethod
     def delete_all(cls):

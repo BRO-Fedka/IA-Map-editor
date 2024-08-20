@@ -1,6 +1,9 @@
+import svgwrite.shapes
+
 from Map.MapComponents.MapComponent import *
 from Workspace.Drafts.SingeLineDraft import *
 from functions.functions import hex_to_rgb
+from svgwrite import Drawing
 
 
 class BridgeMapComponent(MapComponent):
@@ -16,7 +19,7 @@ class BridgeMapComponent(MapComponent):
         self._base_shape = shape
         self._shape = shape.buffer(60 / 320)
         self._selection_id = workspace.create_line((0, 0, 0, 0), fill="#000000",
-                                                width=1, tags=type(self).__name__)
+                                                   width=1, tags=type(self).__name__)
         self._border_id = workspace.create_line((0, 0, 0, 0), fill="#000000",
                                                 width=self._workspace.get_zoom() * 60 / 320, tags=type(self).__name__)
         self._object_id = workspace.create_line((0, 0, 0, 0), fill="#000000",
@@ -89,12 +92,25 @@ class BridgeMapComponent(MapComponent):
         self._workspace.lift(self._border_id)
         super().lift_instance()
 
-    def draw_map_instance(self, draw: ImageDraw.Draw, img_wh: int):
+    def draw_map_instance_image_draw(self, draw: ImageDraw.Draw, img_wh: int):
         map_wh = self._map.get_wh()
 
         def f(val):
             return round(val[0] / map_wh * img_wh), round(val[1] / map_wh * img_wh)
-        draw.line(list(map(f,self._base_shape.coords[:])),fill=hex_to_rgb(self._map.get_ct_field('b0')),width=round(60 / 320 / map_wh*img_wh))
+
+        draw.line(list(map(f, self._base_shape.coords[:])), fill=hex_to_rgb(self._map.get_ct_field('b0')),
+                  width=round(60 / 320 / map_wh * img_wh))
+
+    def draw_map_instance_svgwrite(self, draw: Drawing, img_wh: int):
+        map_wh = self._map.get_wh()
+
+        def f(val):
+            return round(val[0] / map_wh * img_wh), round(val[1] / map_wh * img_wh)
+
+        line = draw.add(svgwrite.shapes.Line(list(map(f, self._base_shape.coords[:]))[0],
+                                             list(map(f, self._base_shape.coords[:]))[1], ))
+        line.stroke(color=self._map.get_ct_field('b0'), width=60 / 320 / map_wh * img_wh)
 
     def get_as_list(self) -> List:
-        return [self._base_shape.coords[0][0],self._base_shape.coords[0][1],self._base_shape.coords[1][0],self._base_shape.coords[1][1]]
+        return [self._base_shape.coords[0][0], self._base_shape.coords[0][1], self._base_shape.coords[1][0],
+                self._base_shape.coords[1][1]]

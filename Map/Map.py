@@ -1,4 +1,7 @@
 from typing import *
+
+import svgwrite.shapes
+
 from Map.IMap import *
 from functions.functions import *
 import json
@@ -12,10 +15,11 @@ from Map.MapComponents.ConcreteMapComponent import ConcreteMapComponent
 from Map.MapComponents.StoneMapComponent import StoneMapComponent
 from Map.MapComponents.CapturePointMapComponent import CapturePointMapComponent
 from Map.MapComponents.VehicleDummyMapComponent import VehicleDummyMapComponent
-
-
+from svgwrite import Drawing
+import webbrowser
 from PIL import Image, ImageDraw, ImageFilter
 from functions.functions import hex_to_rgb
+import os
 
 
 class Map(IMap):
@@ -96,13 +100,25 @@ class Map(IMap):
             new_map = Map(parsed_json, workspace)
             return new_map
 
-    def get_preview_image_png(self, wh: int = 640, blur: bool = False):
+    def get_preview_image_draw(self, wh: int = 640, blur: bool = False):
         img = Image.new("RGB", size=(wh, wh), color=hex_to_rgb(self.get_ct_field('bg')))
         draw = ImageDraw.Draw(img)
         draw.antialias = True
         for mc in self.__available_map_components:
-            mc.draw_map(draw, wh)
+            mc.draw_map_image_draw(draw, wh)
         img.filter(ImageFilter.BoxBlur(int(blur))).show()
+
+    def get_preview_image_svg(self, wh: int = 640):
+        draw = Drawing(os.getcwd() + "/Output/output.svg")
+        rect = draw.add(svgwrite.shapes.Rect((0, 0), (wh, wh)))
+        rect.fill(self.get_ct_field('bg'))
+        for mc in self.__available_map_components:
+            mc.draw_map_svgwrite(draw, wh)
+        draw.save()
+        try:
+            webbrowser.open(os.getcwd() + "/Output/output.svg")
+        except:
+            pass
 
     def close(self):
         for mc in self.__available_map_components:

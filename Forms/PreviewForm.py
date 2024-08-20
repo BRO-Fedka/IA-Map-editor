@@ -1,3 +1,4 @@
+import logging
 from tkinter import *
 from GUI.ICommon import *
 
@@ -33,7 +34,7 @@ class PreviewForm(Toplevel, ICommon):
 
     def generate(self):
         try:
-            self.get_workspace().get_map().get_preview_image_png(int(self.__txt_wh.get()),self.__blur_var.get())
+            self.get_workspace().get_map().get_preview_image_draw(int(self.__txt_wh.get()), self.__blur_var.get())
             self.destroy()
         except:
-            pass
+            logging.exception('')
