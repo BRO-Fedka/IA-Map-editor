@@ -8,6 +8,11 @@ class PositiveFloatPI(Entry, IPropertyInput):
     _white_list = "0123456789."
 
     def __init__(self, master, getter: Callable[[], float], setter: Callable[[float], None], **kwargs):
+        self._ndigits = 2
+        try:
+            self._ndigits = kwargs['ndigits']
+        except:
+            pass
         kwargs['font'] = ('', 10)
         kwargs['width'] = 7
         kwargs['justify'] = "center"
@@ -27,7 +32,7 @@ class PositiveFloatPI(Entry, IPropertyInput):
 
     def __on_mouse_wheel(self, e):
         self.value += (e.delta/abs(e.delta)*0.01)
-        self.value = round(self.value, 2)
+        self.value = round(self.value, self._ndigits)
         self.delete(0, END)
         self.insert(0, str(self.value))
         self.__valid(None)
@@ -47,7 +52,7 @@ class PositiveFloatPI(Entry, IPropertyInput):
                 value = 0
             else:
                 value = float(new_value)
-        value = round(float(value), 2)
+        value = round(float(value), self._ndigits)
         if value < 0:
             value = 0
         self.delete(0, END)

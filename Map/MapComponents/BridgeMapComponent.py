@@ -112,5 +112,5 @@ class BridgeMapComponent(MapComponent):
         line.stroke(color=self._map.get_ct_field('b0'), width=60 / 320 / map_wh * img_wh)
 
     def get_as_list(self) -> List:
-        return [self._base_shape.coords[0][0], self._base_shape.coords[0][1], self._base_shape.coords[1][0],
-                self._base_shape.coords[1][1]]
+        return [round(self._base_shape.coords[0][0],2), round(self._base_shape.coords[0][1],2), round(self._base_shape.coords[1][0],2),
+                round(self._base_shape.coords[1][1],2)]

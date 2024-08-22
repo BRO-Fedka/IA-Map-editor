@@ -20,8 +20,8 @@ class InfoBar(Frame, IInfoBar, ICommon):
         # self.__lbl_sel.grid(row=0, column=3)
         self.__frm_properties = Frame(self, bg=self['bg'], height=21)
         self.__frm_properties.pack(side=LEFT)
-        self.__properties: List[List[Widget,Widget]] = []
-        self.bind('<Button>', lambda e:self.focus_set())
+        self.__properties: List[List[Widget, Widget]] = []
+        self.bind('<Button>', lambda e: self.focus_set())
 
     def update_x(self, val: float):
         self.__lbl_x['text'] = f"X: {val}"
@@ -40,10 +40,10 @@ class InfoBar(Frame, IInfoBar, ICommon):
 
     def show_properties(self, properties: List[MCProperty]):
         for prop in properties:
-            lbl = Label(self.__frm_properties, text=prop.name + ":", bg=self['bg'])
-            lbl.pack(side=LEFT)
+            lbl = Label(self.__frm_properties, text="" + prop.name + ":" * int(len(prop.name) != 0), bg=self['bg'])
+            lbl.pack(side=LEFT,padx=0,pady=0)
             pi = prop.widget(self.__frm_properties, getter=prop.getter, setter=prop.setter, **prop.kwards)
-            pi.pack(side=LEFT)
+            pi.pack(side=LEFT,padx=0,pady=0)
             self.__properties.append([lbl, pi])
 
     def hide_properties(self):

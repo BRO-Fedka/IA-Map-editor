@@ -16,7 +16,7 @@ class MapComponent(IMapComponent):
     _instances: List = []
     _shape: base.BaseGeometry = None
     _map: IMap = None
-    _selected_instances = []
+    _selected_instances: set = set()
     _is_selected: bool = False
     _draft: Type[Draft] = Draft
     _mc_char: str = ''
@@ -87,7 +87,7 @@ class MapComponent(IMapComponent):
             cls.remove_all_selections()
         if not (selected_instance is None):
             selected_instance.select(x, y)
-            cls._selected_instances.append(selected_instance)
+            cls._selected_instances.add(selected_instance)
 
     def intersects(self, shape: base.BaseGeometry) -> bool:
         return self._shape.intersects(shape)
@@ -115,13 +115,13 @@ class MapComponent(IMapComponent):
     def remove_all_selections(cls):
         for instance in cls._selected_instances:
             instance.unselect()
-        cls._selected_instances = []
+        cls._selected_instances = set()
 
     @classmethod
     def delete_selected(cls):
         for instance in cls._selected_instances:
             instance.delete()
-        cls._selected_instances = []
+        cls._selected_instances = set()
 
     @classmethod
     def move_selected(cls, x: float, y: float):

@@ -86,7 +86,7 @@ class PolyMapComponent(MapComponent):
         poly.fill(self._map.get_ct_field(self._fill_ct_code))
 
     def get_as_list(self) -> List:
-        return list(map(list, self._shape.exterior.coords[:]))
+        return list(map(lambda v: list(map(lambda g: round(g,2),v)), self._shape.exterior.coords[:]))
 
     @classmethod
     def get_draft(cls) -> Type[Draft]:

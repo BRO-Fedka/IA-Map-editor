@@ -116,13 +116,13 @@ class CapturePointMapComponent(MapComponent):
         circ.stroke('red', width=img_wh/2/320)
 
     def get_as_list(self) -> List:
-        return [self._char, self._base_shape.x, self._base_shape.y, self.__d]
+        return [self._char, round(self._base_shape.x, 2), round(self._base_shape.y, 2), self.__d]
 
     def set_char(self, char: str):
         chars = "ABCDEFGHIJKLMNOPQRSTUVWSYZ"
         for instance in self._instances:
             chars = chars.replace(instance._char, "")
-        print(chars)
+        # print(chars)
         if char in chars:
             self._char = char
             self._workspace.itemconfig(self._text_id, text=char)

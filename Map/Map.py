@@ -15,6 +15,9 @@ from Map.MapComponents.ConcreteMapComponent import ConcreteMapComponent
 from Map.MapComponents.StoneMapComponent import StoneMapComponent
 from Map.MapComponents.CapturePointMapComponent import CapturePointMapComponent
 from Map.MapComponents.VehicleDummyMapComponent import VehicleDummyMapComponent
+from Map.MapComponents.TreesMapComponent import TreesMapComponent
+
+
 from svgwrite import Drawing
 import webbrowser
 from PIL import Image, ImageDraw, ImageFilter
@@ -65,7 +68,7 @@ class Map(IMap):
             self.__workspace.set_bg(self.get_ct_field('bg'))
 
     def save_ct(self, fp: str):
-        with open(self.__file_path, 'w') as file:
+        with open(fp, 'w') as file:
             json.dump({'CD': self.__ct}, file)
 
     def get_ct_field(self, key: str) -> str:

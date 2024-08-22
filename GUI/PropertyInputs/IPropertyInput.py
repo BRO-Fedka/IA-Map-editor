@@ -1,6 +1,6 @@
-from typing import Protocol, Callable
+from typing import Protocol, Callable, Dict
 
 
-class IPropertyInput:
-    def __init__(self, master, getter: Callable[[], str], setter: Callable[[str], None], **kwargs):
+class IPropertyInput(Protocol):
+    def __init__(self, master, getter: Callable, setter: Callable, **kwargs:Dict):
         pass

@@ -36,5 +36,5 @@ class MainForm(Tk):
         return self.__map_component_menu
 
     def get_tk(self) -> Tk:
-        print("got")
+        # print("got")
         return self

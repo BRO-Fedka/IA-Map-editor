@@ -90,7 +90,7 @@ class RoadMapComponent(MapComponent):
             self._base_shape = LineString(list(map(new_coords, self._base_shape.coords[:])))
 
         else:
-            print(self._selected_coords)
+            # print(self._selected_coords)
             n_coords = []
             for coord in range(0, len(self._base_shape.coords[:])):
                 if coord in self._selected_coords:
@@ -123,7 +123,7 @@ class RoadMapComponent(MapComponent):
         poly.fill('none')
 
     def get_as_list(self) -> List:
-        return list(map(list, self._base_shape.coords[:]))
+        return list(map(lambda v: list(map(lambda g: round(g,2),v)), self._shape.coords[:]))
 
     @staticmethod
     def get_card_icon() -> PhotoImage:

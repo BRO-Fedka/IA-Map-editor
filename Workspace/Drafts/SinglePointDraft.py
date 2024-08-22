@@ -24,6 +24,6 @@ class SinglePointDraft(Draft):
         pass
 
     def complete(self):
-        print('!')
+        # print('!')
         self._cls.new_component(self._workspace, Point(self._coords), self._map)
         super().complete()
