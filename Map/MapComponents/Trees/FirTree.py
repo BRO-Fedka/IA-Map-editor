@@ -12,6 +12,7 @@ class FirTree(BaseTree):
         3:0.25,
     }
     type_id: int = 1
+    _map_ct: str = 'ff'
 
     def __init__(self, workspace: IWorkspace, x: float, y: float, stage: int, map:IMap):
         self._object_id = workspace.create_oval(0, 0, 0, 0, fill="#fff", outline='',

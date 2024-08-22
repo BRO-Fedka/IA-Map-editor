@@ -12,6 +12,7 @@ class PalmTree(BaseTree):
         3:0.25,
     }
     type_id: int = 2
+    _map_ct: str = 'pf'
 
     def __init__(self, workspace: IWorkspace, x: float, y: float, stage: int, map:IMap):
         self._object_id = workspace.create_oval(0, 0, 0, 0, fill="#fff", outline='',

@@ -110,7 +110,7 @@ class RoadMapComponent(MapComponent):
             return round(val[0] / map_wh * img_wh), round(val[1] / map_wh * img_wh)
 
         draw.line(list(map(f, self._base_shape.coords[:])),
-                  fill=hex_to_rgb(self._map.get_ct_field(self._fill_ct_code)), width=round(40 / 320 / map_wh * img_wh))
+                  fill=hex_to_rgb(self._map.get_ct_field('cs')), width=round(40 / 320 / map_wh * img_wh))
 
     def draw_map_instance_svgwrite(self, draw: Drawing, img_wh: int):
         map_wh = self._map.get_wh()
@@ -123,7 +123,7 @@ class RoadMapComponent(MapComponent):
         poly.fill('none')
 
     def get_as_list(self) -> List:
-        return list(map(lambda v: list(map(lambda g: round(g,2),v)), self._shape.coords[:]))
+        return list(map(lambda v: list(map(lambda g: round(g,2),v)), self._base_shape.coords[:]))
 
     @staticmethod
     def get_card_icon() -> PhotoImage:
