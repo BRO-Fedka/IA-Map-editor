@@ -18,6 +18,8 @@ class PalmTree(BaseTree):
         self._object_id = workspace.create_oval(0, 0, 0, 0, fill="#fff", outline='',
                                                 tags=type(self).__name__)
         super().__init__(workspace, x, y, stage, map)
+        self._map.get_ct_field('pt')
+        self._map.get_ct_field('pm')
 
     def update(self):
         self._workspace.coords(self._object_id, self._workspace.calc_x(self.x - self._size / 2),

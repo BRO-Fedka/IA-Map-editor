@@ -3,47 +3,42 @@ from functions.functions import hex_to_rgb, get_finite_inherits
 from Workspace.Drafts.MultiPointDraft import *
 from svgwrite.shapes import Polyline as SVG_Polygon
 import math
-from GUI.PropertyInputs.ComboBoxPI import ComboBoxPI
+from GUI.PropertyInputs.PositiveFloatPI import PositiveFloatPI
+from GUI.PropertyInputs.DirectionPI import DirectionPI
 from GUI.PropertyInputs.ButtonPI import ButtonPI
-# get_finite_inherits
-from Map.MapComponents.Trees.BaseTree import BaseTree
-from Map.MapComponents.Trees.FirTree import FirTree
-from Map.MapComponents.Trees.PalmTree import PalmTree
-from Map.MapComponents.Trees.ClassicalTree import ClassicalTree
+from Map.MapComponents.Buildings.BaseBuilding import BaseBuilding
 
-
-lst = get_finite_inherits(BaseTree)
-TREES_VARIANTS: Dict[str,Type[BaseTree]] = {}
-TREES_TYPE_ID: Dict[int,Type[BaseTree]] = {}
+lst = get_finite_inherits(BaseBuilding)
+TREES_VARIANTS: Dict[str, Type[BaseBuilding]] = {}
+TREES_TYPE_ID: Dict[int, Type[BaseBuilding]] = {}
 for tree in lst:
     TREES_VARIANTS[tree.__name__] = tree
     TREES_TYPE_ID[tree.type_id] = tree
 
 
-class TreesMapComponent(MapComponent):
+class BuildingsMapComponent(MapComponent):
     _shape: MultiPolygon = None
     _base_shape: MultiPoint = None
     _instances: List = []
     _draft: Type[MultiPointDraft] = MultiPointDraft
-    _mc_char: str = 'T'
+    _mc_char: str = '#'
 
     def __init__(self, workspace: IWorkspace, shape: MultiPoint, map: IMap):
         super().__init__(workspace, shape, map)
         self._base_shape = shape
         self._shape = shape.buffer(20 / 320)
         self._selected_trees: Set[int] = set()
-        self._trees: List[BaseTree] = []
+        self._trees: List[BaseBuilding] = []
         for coord in shape.geoms:
-            self._trees.append(ClassicalTree(workspace, coord.x, coord.y, 0, map))
+            self._trees.append(BaseBuilding(workspace, coord.x, coord.y,0.1,0.1, 0, map))
 
-        self.update_shape()
         self.update_instance_ct()
         self.update_instance()
 
     def update_shape(self):
         n_coords: List[Polygon] = []
         for tree in self._trees:
-            n_coords.append(tree.get_as_buffered_point())
+            n_coords.append(tree.get_polygon())
         self._shape = MultiPolygon(n_coords)
 
     def update_instance_ct(self):
@@ -87,20 +82,20 @@ class TreesMapComponent(MapComponent):
 
     @staticmethod
     def get_card_icon() -> PhotoImage:
-        return PhotoImage(file="src/tree.png")
+        return PhotoImage(file="src/buildings.png")
 
-    def add_tree(self, tree: BaseTree):
-        self._trees. append(tree)
+    def add_tree(self, tree: BaseBuilding):
+        self._trees.append(tree)
         self.update_shape()
 
     @classmethod
     def parse_map_raw_data_create_all(cls, data: dict, workspace: IWorkspace, map: IMap):
         try:
-            list_of_trees = data['T']
+            list_of_trees = data['#']
             for tree_lst in list_of_trees:
                 tcls = cls.new_component(workspace, MultiPoint(), map)
                 for t in tree_lst:
-                    tcls.add_tree(TREES_TYPE_ID[t[0]](workspace,t[1],t[2],t[3], map))
+                    tcls.add_tree(TREES_TYPE_ID[t[0]](workspace, t[1], t[2],t[3],t[4], t[5], map))
         except KeyError:
             pass
 
@@ -153,9 +148,19 @@ class TreesMapComponent(MapComponent):
                 return True
         return False
 
-    def set_stage(self, val: int):
+    def set_direction(self, val: int):
         for tree_id in list(self._selected_trees):
-            self._trees[tree_id].set_stage(val)
+            self._trees[tree_id].set_direction(val)
+        self.update_shape()
+
+    def set_w(self, val: float):
+        for tree_id in list(self._selected_trees):
+            self._trees[tree_id].set_w(val)
+        self.update_shape()
+
+    def set_h(self, val: float):
+        for tree_id in list(self._selected_trees):
+            self._trees[tree_id].set_h(val)
         self.update_shape()
 
     def select_all(self):
@@ -163,24 +168,24 @@ class TreesMapComponent(MapComponent):
             self._trees[tree_id].select()
             self._selected_trees.add(tree_id)
 
-    def set_type(self, val:str):
+    def set_type(self, val: str):
         cls = TREES_VARIANTS[val]
         for tree_id in list(self._selected_trees):
             self._trees[tree_id].delete()
-            self._trees[tree_id] = cls(self._workspace,self._trees[tree_id].x,self._trees[tree_id].y,self._trees[tree_id].get_stage(),self._map)
+            self._trees[tree_id] = cls(self._workspace, self._trees[tree_id].x, self._trees[tree_id].y,0.1,0.1,0, self._map)
             self._trees[tree_id].select()
         n_coords: List[Polygon] = []
         for tree in self._trees:
-            n_coords.append(tree.get_as_buffered_point())
+            n_coords.append(tree.get_polygon())
         self._shape = MultiPolygon(n_coords)
 
     def get_properties(self) -> List[MCProperty]:
         if len(self._selected_trees) > 0:
             return [
-                MCProperty(ComboBoxPI, self.set_stage, lambda: self._trees[list(self._selected_trees)[0]].get_stage(), {'values':list(self._trees[list(self._selected_trees)[0]].sizes_of_stages.keys())}, "Stage"),
-
-                MCProperty(ComboBoxPI, self.set_type, lambda: type(self._trees[list(self._selected_trees)[0]]).__name__,{'values':list(TREES_VARIANTS.keys())},"Type")
-
+                MCProperty(DirectionPI, self.set_direction, lambda: self._trees[list(self._selected_trees)[0]].get_direction(), {}, "Direction"),
+                MCProperty(PositiveFloatPI,self.set_w, lambda: self._trees[list(self._selected_trees)[0]].get_w(),{},'Width'),
+                MCProperty(PositiveFloatPI, self.set_h, lambda: self._trees[list(self._selected_trees)[0]].get_h(),{},"Height"),
+                MCProperty(ButtonPI, lambda: None, lambda: None, {'text': 'Select All', 'command': self.select_all},''),
             ]
 
         else:

@@ -16,6 +16,7 @@ from Map.MapComponents.StoneMapComponent import StoneMapComponent
 from Map.MapComponents.CapturePointMapComponent import CapturePointMapComponent
 from Map.MapComponents.VehicleDummyMapComponent import VehicleDummyMapComponent
 from Map.MapComponents.TreesMapComponent import TreesMapComponent
+from Map.MapComponents.BuildingsMapComponent import BuildingsMapComponent
 
 
 from svgwrite import Drawing
@@ -69,7 +70,7 @@ class Map(IMap):
 
     def save_ct(self, fp: str):
         with open(fp, 'w') as file:
-            json.dump({'CD': self.__ct}, file)
+            json.dump({'CT': self.__ct}, file)
 
     def get_ct_field(self, key: str) -> str:
         try:

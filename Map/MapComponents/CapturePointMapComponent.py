@@ -78,8 +78,10 @@ class CapturePointMapComponent(MapComponent):
 
     @classmethod
     def new_component(cls, workspace: IWorkspace, shape: Point, map: IMap, **kwargs):
-        kwargs['d'] = 0.5
-        kwargs['char'] = cls.get_free_char()
+        if not 'd' in kwargs.keys():
+            kwargs['d'] = 0.5
+        if not 'char' in kwargs.keys():
+            kwargs['char'] = cls.get_free_char()
         new_component = cls(workspace, shape, map, **kwargs)
         cls._instances.append(new_component)
 
@@ -108,12 +110,13 @@ class CapturePointMapComponent(MapComponent):
     def draw_map_instance_svgwrite(self, draw: Drawing, img_wh: int):
         map_wh = self._map.get_wh()
         text = draw.add(Text(self._char, (
-        (self._base_shape.x + self.__d / 2*1.1) / map_wh * img_wh, (self._base_shape.y + self.__d / 2) / map_wh * img_wh)))
+            (self._base_shape.x + self.__d / 2 * 1.1) / map_wh * img_wh,
+            (self._base_shape.y + self.__d / 2) / map_wh * img_wh)))
         circ = draw.add(Circle((self._base_shape.x / map_wh * img_wh, self._base_shape.y / map_wh * img_wh),
                                self.__d / 2 / map_wh * img_wh))
         text.fill('red')
         circ.fill('none')
-        circ.stroke('red', width=img_wh/2/320)
+        circ.stroke('red', width=img_wh / 2 / 320)
 
     def get_as_list(self) -> List:
         return [self._char, round(self._base_shape.x, 2), round(self._base_shape.y, 2), self.__d]

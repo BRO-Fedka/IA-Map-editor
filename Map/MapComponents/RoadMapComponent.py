@@ -3,6 +3,7 @@ from functions.functions import hex_to_rgb
 from Workspace.Drafts.LinesSequenceDraft import *
 from svgwrite.shapes import Polyline as SVG_Polygon
 import math
+from GUI.PropertyInputs.ButtonPI import ButtonPI
 
 
 class RoadMapComponent(MapComponent):
@@ -12,6 +13,7 @@ class RoadMapComponent(MapComponent):
     _draft: Type[LinesSequenceDraft] = LinesSequenceDraft
     _fill_ct_code = "bg"
     _mc_char: str = 'R'
+    _marked_joint: Tuple[float,float] = None
 
     def __init__(self, workspace: IWorkspace, shape: LineString, map: IMap):
         super().__init__(workspace, shape, map)
@@ -88,14 +90,15 @@ class RoadMapComponent(MapComponent):
                 return [coords[0] + x, coords[1] + y]
 
             self._base_shape = LineString(list(map(new_coords, self._base_shape.coords[:])))
+            self.update_instance()
 
         else:
             # print(self._selected_coords)
             n_coords = []
             for coord in range(0, len(self._base_shape.coords[:])):
                 if coord in self._selected_coords:
-                    n_coords.append([self._base_shape.coords[:][coord][0] + x / len(self._selected_coords),
-                                     self._base_shape.coords[:][coord][1] + y / len(self._selected_coords)])
+                    n_coords.append([self._base_shape.coords[:][coord][0] + x,
+                                     self._base_shape.coords[:][coord][1] + y])
                 else:
                     n_coords.append(
                         [self._base_shape.coords[:][coord][0], self._base_shape.coords[:][coord][1]])
@@ -154,6 +157,21 @@ class RoadMapComponent(MapComponent):
             self._workspace.delete(index)
         super().delete()
 
+    def mark_joint(self):
+        type(self)._marked_joint = (self._base_shape.coords[:][list(self._selected_coords)[0]][0], self._base_shape.coords[:][list(self._selected_coords)[0]][1])
+
+    def set_to_marked_joint(self):
+        n_coords = []
+        for coord in range(0, len(self._base_shape.coords[:])):
+            if coord in self._selected_coords:
+                n_coords.append(list(self._marked_joint))
+            else:
+                n_coords.append(
+                    [self._base_shape.coords[:][coord][0], self._base_shape.coords[:][coord][1]])
+        self._base_shape = LineString(n_coords)
+        self._shape = self._base_shape.buffer(20 / 320)
+        self.update_instance()
+
     def unselect(self):
         self._selected_coords = set()
         super().unselect()
@@ -166,5 +184,15 @@ class RoadMapComponent(MapComponent):
             if math.sqrt((self._base_shape.coords[:][coord][0] - x) ** 2 + (
                     self._base_shape.coords[:][coord][1] - y) ** 2) < 20 / 320:
                 self._selected_coords.add(coord)
-        if len(self._selected_coords) > 0 or Point(x, y).intersects(self._base_shape):
+        if len(self._selected_coords) > 0 or Point(x, y).intersects(self._shape):
             super().select(x, y)
+
+    def get_properties(self) -> List[MCProperty]:
+        if len(self._selected_coords) == 1:
+            return [
+                MCProperty(ButtonPI,lambda: None, lambda: None,{'text':'Mark joint','command':self.mark_joint},''),
+                MCProperty(ButtonPI,lambda: None, lambda: None,{'text':'Set to marked joint','command':self.set_to_marked_joint},'')
+            ]
+
+        else:
+            return []
