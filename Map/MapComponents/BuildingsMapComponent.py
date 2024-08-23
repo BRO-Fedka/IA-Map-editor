@@ -6,7 +6,10 @@ import math
 from GUI.PropertyInputs.PositiveFloatPI import PositiveFloatPI
 from GUI.PropertyInputs.DirectionPI import DirectionPI
 from GUI.PropertyInputs.ButtonPI import ButtonPI
+from GUI.PropertyInputs.ComboBoxPI import ComboBoxPI
 from Map.MapComponents.Buildings.BaseBuilding import BaseBuilding
+from Map.MapComponents.Buildings.HouseBuilding import HouseBuilding
+from Map.MapComponents.Buildings.CargoContainerBuilding import CargoContainerBuilding
 
 lst = get_finite_inherits(BaseBuilding)
 TREES_VARIANTS: Dict[str, Type[BaseBuilding]] = {}
@@ -30,10 +33,12 @@ class BuildingsMapComponent(MapComponent):
         self._selected_trees: Set[int] = set()
         self._trees: List[BaseBuilding] = []
         for coord in shape.geoms:
-            self._trees.append(BaseBuilding(workspace, coord.x, coord.y,0.1,0.1, 0, map))
+            self._trees.append(HouseBuilding(workspace, coord.x, coord.y,0.1,0.1, 0, map))
+
 
         self.update_instance_ct()
         self.update_instance()
+        self.update_shape()
 
     def update_shape(self):
         n_coords: List[Polygon] = []
@@ -86,7 +91,7 @@ class BuildingsMapComponent(MapComponent):
 
     def add_tree(self, tree: BaseBuilding):
         self._trees.append(tree)
-        self.update_shape()
+
 
     @classmethod
     def parse_map_raw_data_create_all(cls, data: dict, workspace: IWorkspace, map: IMap):
@@ -95,7 +100,13 @@ class BuildingsMapComponent(MapComponent):
             for tree_lst in list_of_trees:
                 tcls = cls.new_component(workspace, MultiPoint(), map)
                 for t in tree_lst:
+                    # print(TREES_TYPE_ID[t[0]])
+                    # print(workspace, t[1], t[2],t[3],t[4], t[5], map)
                     tcls.add_tree(TREES_TYPE_ID[t[0]](workspace, t[1], t[2],t[3],t[4], t[5], map))
+                tcls.update_shape()
+                tcls.update_instance()
+                tcls.update_ct()
+                tcls.lift_instance()
         except KeyError:
             pass
 
@@ -170,14 +181,13 @@ class BuildingsMapComponent(MapComponent):
 
     def set_type(self, val: str):
         cls = TREES_VARIANTS[val]
+        print(cls)
         for tree_id in list(self._selected_trees):
             self._trees[tree_id].delete()
             self._trees[tree_id] = cls(self._workspace, self._trees[tree_id].x, self._trees[tree_id].y,0.1,0.1,0, self._map)
+            print(self._trees[tree_id])
             self._trees[tree_id].select()
-        n_coords: List[Polygon] = []
-        for tree in self._trees:
-            n_coords.append(tree.get_polygon())
-        self._shape = MultiPolygon(n_coords)
+        self.update_shape()
 
     def get_properties(self) -> List[MCProperty]:
         if len(self._selected_trees) > 0:
@@ -186,6 +196,7 @@ class BuildingsMapComponent(MapComponent):
                 MCProperty(PositiveFloatPI,self.set_w, lambda: self._trees[list(self._selected_trees)[0]].get_w(),{},'Width'),
                 MCProperty(PositiveFloatPI, self.set_h, lambda: self._trees[list(self._selected_trees)[0]].get_h(),{},"Height"),
                 MCProperty(ButtonPI, lambda: None, lambda: None, {'text': 'Select All', 'command': self.select_all},''),
+                MCProperty(ComboBoxPI, self.set_type, lambda: type(self._trees[list(self._selected_trees)[0]]).__name__,{'values': list(TREES_VARIANTS.keys())}, "Type")
             ]
 
         else:

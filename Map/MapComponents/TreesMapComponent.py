@@ -169,10 +169,7 @@ class TreesMapComponent(MapComponent):
             self._trees[tree_id].delete()
             self._trees[tree_id] = cls(self._workspace,self._trees[tree_id].x,self._trees[tree_id].y,self._trees[tree_id].get_stage(),self._map)
             self._trees[tree_id].select()
-        n_coords: List[Polygon] = []
-        for tree in self._trees:
-            n_coords.append(tree.get_as_buffered_point())
-        self._shape = MultiPolygon(n_coords)
+        self.update_shape()
 
     def get_properties(self) -> List[MCProperty]:
         if len(self._selected_trees) > 0:

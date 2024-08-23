@@ -113,7 +113,7 @@ class PolyMapComponent(MapComponent):
         super().unselect()
 
     def intersects(self, shape: base.BaseGeometry) -> bool:
-        return self._shape.intersects(shape.buffer(10 / self._workspace.get_zoom()))
+        return self._shape.buffer(10 / self._workspace.get_zoom()).intersects(shape)
 
     def delete(self):
         for index in self._selected_coords_ids:

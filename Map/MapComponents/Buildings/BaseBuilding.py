@@ -11,7 +11,7 @@ import math
 
 class BaseBuilding:
     type_id: int = None
-    _map_ct: str = 'rr'
+    _map_ct: str = 'bg'
 
     def _calc_xy(self, coords: Tuple[float, float]) -> Tuple[float, float]:
         return self.x + coords[0] * self._vx[0] + coords[1] * self._vy[0], self.y + coords[0] * self._vx[1] + coords[
@@ -104,8 +104,8 @@ class BaseBuilding:
         poly.fill(self._map.get_ct_field(self._map_ct))
 
     def get_as_list(self) -> List:
-        print([self.type_id, round(self.x, 2), round(self.y, 2), round(self._w, 2), round(self._h, 2),
-                self.get_direction()])
+        # print([self.type_id, round(self.x, 2), round(self.y, 2), round(self._w, 2), round(self._h, 2),
+        #         self.get_direction()])
         return [self.type_id, round(self.x, 2), round(self.y, 2), round(self._w, 2), round(self._h, 2),
                 self.get_direction()]
 
@@ -117,7 +117,7 @@ class BaseBuilding:
         self._workspace.coords(self._object_id, poly_cords)
 
     def update_ct(self):
-        self._workspace.itemconfig(self._object_id, fill=self._map.get_ct_field('rr'))
+        self._workspace.itemconfig(self._object_id, fill=self._map.get_ct_field(self._map_ct))
 
     def select(self):
         self._is_selected = True
@@ -129,3 +129,4 @@ class BaseBuilding:
 
     def delete(self):
         self._workspace.delete(self._object_id)
+
