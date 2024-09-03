@@ -99,13 +99,14 @@ class CapturePointMapComponent(MapComponent):
         return chars[0]
 
     def draw_map_instance_image_draw(self, draw: ImageDraw.Draw, img_wh: int):
-        map_wh = self._map.get_wh()
-        draw.text((round((self._base_shape.x + self.__d / 2) / map_wh * img_wh),
-                   round((self._base_shape.y - self.__d / 2) / map_wh * img_wh) - 5), fill=(255, 0, 0), text=self._char)
-        draw.ellipse((round((self._base_shape.x - self.__d / 2) / map_wh * img_wh),
-                      round((self._base_shape.y - self.__d / 2) / map_wh * img_wh),
-                      round((self._base_shape.x + self.__d / 2) / map_wh * img_wh),
-                      round((self._base_shape.y + self.__d / 2) / map_wh * img_wh)), outline=(255, 0, 0), width=2)
+        pass
+        # map_wh = self._map.get_wh()
+        # draw.text((round((self._base_shape.x + self.__d / 2) / map_wh * img_wh),
+        #            round((self._base_shape.y - self.__d / 2) / map_wh * img_wh) - 5), fill=(255, 0, 0), text=self._char)
+        # draw.ellipse((round((self._base_shape.x - self.__d / 2) / map_wh * img_wh),
+        #               round((self._base_shape.y - self.__d / 2) / map_wh * img_wh),
+        #               round((self._base_shape.x + self.__d / 2) / map_wh * img_wh),
+        #               round((self._base_shape.y + self.__d / 2) / map_wh * img_wh)), outline=(255, 0, 0), width=2)
 
     def draw_map_instance_svgwrite(self, draw: Drawing, img_wh: int):
         map_wh = self._map.get_wh()

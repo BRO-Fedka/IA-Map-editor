@@ -15,9 +15,8 @@ from Map.MapComponents.ConcreteMapComponent import ConcreteMapComponent
 from Map.MapComponents.StoneMapComponent import StoneMapComponent
 from Map.MapComponents.CapturePointMapComponent import CapturePointMapComponent
 from Map.MapComponents.VehicleDummyMapComponent import VehicleDummyMapComponent
-from Map.MapComponents.TreesMapComponent import TreesMapComponent
 from Map.MapComponents.BuildingsMapComponent import BuildingsMapComponent
-
+from Map.MapComponents.TreesMapComponent import TreesMapComponent
 
 from svgwrite import Drawing
 import webbrowser
@@ -109,9 +108,11 @@ class Map(IMap):
         img = Image.new("RGB", size=(wh, wh), color=hex_to_rgb(self.get_ct_field('bg')))
         draw = ImageDraw.Draw(img)
         draw.antialias = True
+
         for mc in self.__available_map_components:
             mc.draw_map_image_draw(draw, wh)
-        img.filter(ImageFilter.BoxBlur(int(blur))).show()
+        img = img.filter(ImageFilter.BoxBlur(int(blur)))
+        img.save(os.getcwd() + '/Output/output.png')
 
     def get_preview_image_svg(self, wh: int = 640):
         draw = Drawing(os.getcwd() + "/Output/output.svg")
