@@ -39,6 +39,12 @@ class BaseBuilding:
         self.update_shape()
         self.update_ct()
 
+    def hide(self):
+        self._workspace.itemconfig(self._object_id, state="hidden")
+
+    def show(self):
+        self._workspace.itemconfig(self._object_id, state="normal")
+
     def set_direction(self, val: int):
         self._direction = val
         self._vx = (math.cos(val / 180 * math.pi), math.sin(val / 180 * math.pi))

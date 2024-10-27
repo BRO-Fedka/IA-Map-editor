@@ -2,6 +2,7 @@ from Workspace.Drafts.Draft import *
 from Workspace.MapGrid import *
 from GUI.ICommon import *
 import keyboard
+import time
 
 MOVE: int = 2
 SELECT: int = 3
@@ -67,7 +68,8 @@ class Workspace(IWorkspace, ICommon):
             self['bg'] = self.__def_bg
         else:
             self['bg'] = self.__map.get_ct_field('bg')
-            self.__map.update()
+            print(self.__view_center_x-3,self.__view_center_x+3,self.__view_center_y-3,self.__view_center_y+3)
+            self.__map.update(x0=self.__view_center_x-(self.winfo_width()+20)/2/self.get_zoom(),x1=self.__view_center_x+(self.winfo_width()+20)/2/self.get_zoom(),y0=self.__view_center_y-(self.winfo_height()+20)/2/self.get_zoom(),y1=self.__view_center_y+(self.winfo_height()+20)/2/self.get_zoom())
             self.__grid.set_wh(self.get_map().get_wh())
 
     def update_content(self):

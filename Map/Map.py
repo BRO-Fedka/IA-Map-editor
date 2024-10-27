@@ -1,7 +1,7 @@
 from typing import *
 
 import svgwrite.shapes
-
+import time
 from Map.IMap import *
 from functions.functions import *
 import json
@@ -56,9 +56,12 @@ class Map(IMap):
         for mc in self.__available_map_components:
             mc.update_ct()
 
-    def update(self):
+    def update(self, x0: float = None, x1: float = None, y0: float = None, y1: float = None):
         for mc in self.__available_map_components:
-            mc.update()
+            start = time.time()
+            mc.update(x0=x0,x1=x1,y0=y0,y1=y1)
+            end = time.time()
+            print((end - start) * 1000, mc.__name__)
 
     def load_ct(self, fp: str):
         with open(fp) as file:

@@ -27,6 +27,18 @@ class BridgeMapComponent(MapComponent):
         self.update_instance_ct()
         self.update_instance()
 
+    def update_visibility(self):
+        if self._is_instance_hidden != self._is_hidden:
+            self._is_instance_hidden = self._is_hidden
+            if self._is_instance_hidden:
+                self._workspace.itemconfig(self._object_id,state='hidden')
+                self._workspace.itemconfig(self._border_id,state='hidden')
+                self._workspace.itemconfig(self._selection_id,state='hidden')
+            else:
+                self._workspace.itemconfig(self._object_id, state='normal')
+                self._workspace.itemconfig(self._border_id, state='normal')
+                self._workspace.itemconfig(self._selection_id, state='normal')
+
     def update_instance(self):
         self._workspace.coords(self._object_id, (
             self._workspace.calc_x(self._base_shape.coords[0][0]),

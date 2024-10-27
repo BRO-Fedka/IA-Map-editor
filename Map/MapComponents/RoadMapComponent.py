@@ -38,6 +38,20 @@ class RoadMapComponent(MapComponent):
         self.update_instance_ct()
         self.update_instance()
 
+    def update_visibility(self):
+        if self._is_instance_hidden != self._is_hidden:
+            self._is_instance_hidden = self._is_hidden
+            for obj_id in self._objects_ids:
+                if self._is_instance_hidden:
+                    self._workspace.itemconfig(obj_id,state='hidden')
+                else:
+                    self._workspace.itemconfig(obj_id, state='normal')
+            for obj_id in self._joints_ids:
+                if self._is_instance_hidden:
+                    self._workspace.itemconfig(obj_id,state='hidden')
+                else:
+                    self._workspace.itemconfig(obj_id, state='normal')
+
     def update_instance_ct(self):
         if self._is_selected:
             for coord in range(0, len(self._base_shape.coords[:]) - 1):

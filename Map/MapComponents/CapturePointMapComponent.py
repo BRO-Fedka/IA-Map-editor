@@ -50,6 +50,16 @@ class CapturePointMapComponent(MapComponent):
         self._workspace.itemconfig(self._text_id, font=('Arial', math.ceil(self._workspace.get_zoom() * 100 / 320)))
         self._workspace.itemconfig(self._object_id, width=2 + 5 * int(self._is_selected))
 
+    def update_visibility(self):
+        if self._is_instance_hidden != self._is_hidden:
+            self._is_instance_hidden = self._is_hidden
+            if self._is_instance_hidden:
+                self._workspace.itemconfig(self._object_id,state='hidden')
+                self._workspace.itemconfig(self._text_id,state='hidden')
+            else:
+                self._workspace.itemconfig(self._object_id, state='normal')
+                self._workspace.itemconfig(self._text_id, state='normal')
+
     def delete(self):
         super().delete()
         self._workspace.delete(self._text_id)

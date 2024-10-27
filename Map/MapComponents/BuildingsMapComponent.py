@@ -41,6 +41,15 @@ class BuildingsMapComponent(MapComponent):
         self.update_instance()
         self.update_shape()
 
+    def update_visibility(self):
+        if self._is_instance_hidden != self._is_hidden:
+            self._is_instance_hidden = self._is_hidden
+            for tree in self._trees:
+                if self._is_instance_hidden:
+                    tree.hide()
+                else:
+                    tree.show()
+
     def update_shape(self):
         n_coords: List[Polygon] = []
         for tree in self._trees:

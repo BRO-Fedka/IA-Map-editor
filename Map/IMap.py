@@ -4,7 +4,7 @@ from GUI.IWorkspace import *
 
 class IMap(Protocol):
 
-    def update(self):
+    def update(self, x0: float = None, x1: float = None, y0: float = None, y1: float = None):
         pass
 
     def update_ct(self):

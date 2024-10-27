@@ -2,7 +2,7 @@ import math
 
 from Map.MapComponents.MapComponent import *
 from Workspace.Drafts.PolyDraft import *
-from functions.functions import hex_to_rgb
+from functions.functions import hex_to_rgb, is_сonvex
 from Workspace.Drafts.PolySquareDraft import PolySquareDraft
 from Workspace.Drafts.PolyDraft import PolyDraft
 from Workspace.Drafts.PolySquareGridOrientedDraft import PolySquareGridOrientedDraft
@@ -18,22 +18,55 @@ class PolyMapComponent(MapComponent):
 
     def __init__(self, workspace: IWorkspace, shape: Polygon, map: IMap):
         super().__init__(workspace, shape, map)
+
         self._object_id = workspace.create_polygon(shape.exterior.coords[:], outline="#000000",
                                                    width=2 * int(self._is_selected), tags=type(self).__name__)
+        self._convexity_alert = workspace.create_polygon(shape.exterior.coords[:], outline="red",fill='',
+                                                         width=1, tags='markers')
         self._selected_coords: Set[int] = set()
         self._selected_coords_ids: List[int] = []
         for coord in shape.exterior.coords[:]:
             self._selected_coords_ids.append(
-                workspace.create_oval(coord[0] - 5, coord[1] - 5, coord[0] + 5, coord[1] + 5, fill='red', tags='markers', state='hidden'))
+                workspace.create_oval(coord[0] - 5, coord[1] - 5, coord[0] + 5, coord[1] + 5, fill='red',
+                                      tags='markers', state='hidden'))
         self.update_instance_ct()
         self.update_instance()
+        self.update_convexity()
+
+    def update_visibility(self):
+        if self._is_instance_hidden != self._is_hidden:
+            self._is_instance_hidden = self._is_hidden
+            if self._is_instance_hidden:
+                self._workspace.itemconfig(self._object_id,state='hidden')
+                self._workspace.itemconfig(self._convexity_alert,state='hidden')
+                try:
+                    self._workspace.itemconfig(self._object_z0_id,state='hidden')
+                    self._workspace.itemconfig(self._object_z1_id,state='hidden')
+                except:
+                    pass
+            else:
+                self._workspace.itemconfig(self._object_id, state='normal')
+                self._workspace.itemconfig(self._convexity_alert, state='normal')
+                try:
+                    self._workspace.itemconfig(self._object_z0_id,state='normal')
+                    self._workspace.itemconfig(self._object_z1_id,state='normal')
+                except:
+                    pass
+            self.update_convexity()
+
+    def update_convexity(self):
+        # print(is_сonvex(self._shape.exterior.coords[:]))
+        if is_сonvex(self._shape.exterior.coords[:]):
+            self._workspace.itemconfig(self._convexity_alert, state='hidden')
+        else:
+            self._workspace.itemconfig(self._convexity_alert, state='normal')
 
     def update_instance_ct(self):
         for coord in range(0, len(self._shape.exterior.coords[:])):
             if coord in self._selected_coords:
-                self._workspace.itemconfig(self._selected_coords_ids[coord],state='normal')
+                self._workspace.itemconfig(self._selected_coords_ids[coord], state='normal')
             else:
-                self._workspace.itemconfig(self._selected_coords_ids[coord],state='hidden')
+                self._workspace.itemconfig(self._selected_coords_ids[coord], state='hidden')
 
     def update_instance(self):
         poly_cords = []
@@ -41,12 +74,13 @@ class PolyMapComponent(MapComponent):
             poly_cords.append(self._workspace.calc_x(self._shape.exterior.coords[:][coord][0]))
             poly_cords.append(self._workspace.calc_y(self._shape.exterior.coords[:][coord][1]))
             self._workspace.coords(self._selected_coords_ids[coord],
-                                   self._workspace.calc_x(self._shape.exterior.coords[:][coord][0])-5,
-                                   self._workspace.calc_y(self._shape.exterior.coords[:][coord][1])-5,
-                                   self._workspace.calc_x(self._shape.exterior.coords[:][coord][0])+5,
-                                   self._workspace.calc_y(self._shape.exterior.coords[:][coord][1])+5
+                                   self._workspace.calc_x(self._shape.exterior.coords[:][coord][0]) - 5,
+                                   self._workspace.calc_y(self._shape.exterior.coords[:][coord][1]) - 5,
+                                   self._workspace.calc_x(self._shape.exterior.coords[:][coord][0]) + 5,
+                                   self._workspace.calc_y(self._shape.exterior.coords[:][coord][1]) + 5
                                    )
         self._workspace.coords(self._object_id, poly_cords)
+        self._workspace.coords(self._convexity_alert, poly_cords)
 
     def move(self, x: float, y: float):
         if len(self._selected_coords) == 0:
@@ -66,6 +100,7 @@ class PolyMapComponent(MapComponent):
                         [self._shape.exterior.coords[:][coord][0], self._shape.exterior.coords[:][coord][1]])
             self._shape = Polygon(n_coords)
             self.update_instance()
+            self.update_convexity()
 
     def draw_map_instance_image_draw(self, draw: ImageDraw.Draw, img_wh: int):
         map_wh = self._map.get_wh()
@@ -86,7 +121,7 @@ class PolyMapComponent(MapComponent):
         poly.fill(self._map.get_ct_field(self._fill_ct_code))
 
     def get_as_list(self) -> List:
-        return list(map(lambda v: list(map(lambda g: round(g,2),v)), self._shape.exterior.coords[:]))
+        return list(map(lambda v: list(map(lambda g: round(g, 2), v)), self._shape.exterior.coords[:]))
 
     @classmethod
     def get_draft(cls) -> Type[Draft]:
@@ -105,7 +140,7 @@ class PolyMapComponent(MapComponent):
             if math.sqrt((self._shape.exterior.coords[:][coord][0] - x) ** 2 + (
                     self._shape.exterior.coords[:][coord][1] - y) ** 2) < 10 / self._workspace.get_zoom():
                 self._selected_coords.add(coord)
-        if len(self._selected_coords) > 0 or Point(x,y).intersects(self._shape):
+        if len(self._selected_coords) > 0 or Point(x, y).intersects(self._shape):
             super().select(x, y)
 
     def unselect(self):
@@ -116,6 +151,8 @@ class PolyMapComponent(MapComponent):
         return self._shape.buffer(10 / self._workspace.get_zoom()).intersects(shape)
 
     def delete(self):
+        self._workspace.delete(self._object_id)
+        self._workspace.delete(self._convexity_alert)
         for index in self._selected_coords_ids:
             self._workspace.delete(index)
         super().delete()

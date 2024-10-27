@@ -24,6 +24,12 @@ class BaseTree:
         self.set_stage(stage)
         self.update_ct()
 
+    def hide(self):
+        self._workspace.itemconfig(self._object_id, state="hidden")
+
+    def show(self):
+        self._workspace.itemconfig(self._object_id, state="normal")
+
     def move(self, x: float, y: float):
         self.x += x
         self.y += y

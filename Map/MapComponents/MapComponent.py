@@ -20,11 +20,14 @@ class MapComponent(IMapComponent):
     _is_selected: bool = False
     _draft: Type[Draft] = Draft
     _mc_char: str = ''
+    _is_hidden: bool = False
 
     def __init__(self, workspace: IWorkspace, shape: base.BaseGeometry, map: IMap):
         self._workspace = workspace
         self._shape = shape
         self._map = map
+        self._were_visible_on_screen = False
+        self._is_instance_hidden = False
 
     def delete(self):
         try:
@@ -36,15 +39,41 @@ class MapComponent(IMapComponent):
     def update_instance_ct(self):
         pass
 
+    def update_visibility(self):
+        if self._is_instance_hidden != self._is_hidden:
+            self._is_instance_hidden = self._is_hidden
+            if self._is_instance_hidden:
+                self._workspace.itemconfig(self._object_id,state='hidden')
+            else:
+                self._workspace.itemconfig(self._object_id, state='normal')
+
+    @classmethod
+    def change_visibility(cls,val:bool):
+        cls._is_hidden = val
+
     @classmethod
     def update_ct(cls):
         for mc in cls._instances:
             mc.update_instance_ct()
 
+    def get_bounds(self):
+        return self._shape.bounds
+
     @classmethod
-    def update(cls):
+    def update(cls, x0: float = None, x1: float = None, y0: float = None, y1: float = None):
+
         for instance in cls._instances:
-            instance.update_instance()
+            X0, Y0, X1, Y1 = instance.get_bounds()
+            if X1 > x0 and X0 < x1 and Y1 > y0 and Y0 < y1:
+                instance.update_visibility()
+                if not instance._is_instance_hidden: instance.update_instance()
+
+                instance._were_visible_on_screen = True
+            elif instance._were_visible_on_screen:
+                instance.update_visibility()
+                instance.update_instance()
+
+                instance._were_visible_on_screen = False
 
     def update_instance(self):
         pass

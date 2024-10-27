@@ -28,6 +28,13 @@ class IMapComponent(Protocol):
     def update_instance(self):
         pass
 
+    def update_visibility(self):
+        pass
+
+    @classmethod
+    def change_visibility(cls,val:bool):
+        pass
+
     @classmethod
     def parse_map_raw_data_create_all(cls, data: dict, workspace: IWorkspace, map: IMap):
         pass
