@@ -190,12 +190,12 @@ class BuildingsMapComponent(MapComponent):
 
     def set_type(self, val: str):
         cls = TREES_VARIANTS[val]
-        print(cls)
+        # print(cls)
         for tree_id in list(self._selected_trees):
             self._trees[tree_id].delete()
             self._trees[tree_id] = cls(self._workspace, self._trees[tree_id].x, self._trees[tree_id].y, 0.1, 0.1, 0,
                                        self._map)
-            print(self._trees[tree_id])
+            # print(self._trees[tree_id])
             self._trees[tree_id].select()
         self.update_shape()
 

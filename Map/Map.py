@@ -61,7 +61,7 @@ class Map(IMap):
             start = time.time()
             mc.update(x0=x0,x1=x1,y0=y0,y1=y1)
             end = time.time()
-            print((end - start) * 1000, mc.__name__)
+            # print((end - start) * 1000, mc.__name__)
 
     def load_ct(self, fp: str):
         with open(fp) as file:
