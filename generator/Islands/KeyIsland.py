@@ -1,38 +1,48 @@
 from generator.Islands.Island import Island
 from generator.functions import *
 from generator.Structures.KeySeaPort import KeySeaPort
+from generator.Structures.SmallKeySeaPort import SmallKeySeaPort
 
 
 class KeyIsland(Island):
+    town_area_cof = 0.1
+    farm_area_cof = 0
+
     def __init__(self, poly: Polygon, world, zone, children=None):
         super().__init__(poly, world, zone, children)
         self.sea_port = None
 
     def generate(self):
         super().generate()
+        sp_type = KeySeaPort
         if self.poly.area <= 0.075 * 0.075:
             print('isles too small')
-            return
+            sp_type = SmallKeySeaPort
 
         sps = []
         for seg in polysegs(self.poly):
-            sp = KeySeaPort(self, seg)
+            sp = sp_type(self, seg)
             if sp.is_valid():
                 sps.append(sp)
         if len(sps) == 0:
             for seg in polysegs(self.poly):
-                sp = KeySeaPort(self, seg, no_pier=True)
+                sp = SmallKeySeaPort(self, seg)
                 if sp.is_valid():
                     sps.append(sp)
-        sps.sort(key=KeySeaPort.key)
+            sps.sort(key=SmallKeySeaPort.key)
+        else:
+            sps.sort(key=sp_type.key)
         self.sea_port = sps[0]
         self.sea_port.build()
         for crd in self.sea_port.sp_foundation.exterior.coords:
             self.road_points.append((crd[0], crd[1]))
 
+    def save(self, data):
+        super().save(data)
+        self.sea_port.save(data)
+
     def generate1(self):
         super().generate1()
-
 
     def plot(self):
         super().plot()
@@ -61,4 +71,3 @@ class KeyIsland(Island):
         plt.plot(sasx, sasy, 'xg')
         if self.sea_port:
             self.sea_port.plot()
-

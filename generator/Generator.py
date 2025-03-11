@@ -1,10 +1,12 @@
 from generator.Zones import *
+import json
 
 
 class WorldCommon:
     def __init__(self, sd, wh=32):
         seed(sd)
         self.MAP_SQUARE = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
+        self.MAP_SQUARE_LS = LineString([(0, 0), (1, 0), (1, 1), (0, 1), (0, 0)])
         self.ZONES = []
         self.BASES = []
         self.AREAS = []
@@ -15,8 +17,10 @@ class WorldCommon:
         self.WH = wh
 
 
-def generate(s,wh=32):
-    world = WorldCommon(s,wh)
+def generate(s, wh=32):
+    # input()
+    world = WorldCommon(s, wh)
+    Island.cnt = 0
 
     points = [(0.1, 0.1), (0.9, 0.9)]
 
@@ -45,7 +49,8 @@ def generate(s,wh=32):
     for z in world.ZONES:
         if type(z) == Zone:
             world.AREAS.append(z)  # z.poly.area
-            world.RATIOS.append(z)  # max((z.poly.bounds[3] - z.poly.bounds[1]) / (z.poly.bounds[2] - z.poly.bounds[0]),(z.poly.bounds[2] - z.poly.bounds[0]) / (z.poly.bounds[3] - z.poly.bounds[1]))
+            world.RATIOS.append(
+                z)  # max((z.poly.bounds[3] - z.poly.bounds[1]) / (z.poly.bounds[2] - z.poly.bounds[0]),(z.poly.bounds[2] - z.poly.bounds[0]) / (z.poly.bounds[3] - z.poly.bounds[1]))
     world.AREAS.sort(key=lambda z: z.poly.area)
     world.RATIOS.sort(key=lambda z: z.ratio)
     if world.AREAS[0].poly.area < 0.1 * 0.1:
@@ -87,26 +92,55 @@ def generate(s,wh=32):
     for i in world.ISLANDS:
         i.plot()
 
-    # print(BASES[0].poly.bounds)
-    # print(BASES[1].poly.bounds)
-
-    # print(ZONES)
     ax = plt.gca()
     ax.set_xticks(numpy.arange(0, 1, 1 / world.WH))
     ax.set_yticks(numpy.arange(0, 1., 1 / world.WH))
 
     plt.grid(True)
     plt.show()
+    print('FINISH')
+    # input()
+    data = {}
+    with open('template.json') as f:
+        data = json.loads(f.read())
+    for i in world.ISLANDS:
+        i.save(data)
+    with open(f'maps/MAP{s}.json','w') as f:
+        f.write(json.dumps(data))
     return True
 
 
 if __name__ == "__main__":
     flag = False
     i = 12
+    seeds = []
+    exceptions = []
+    # 12
     # TODO 158 BRIDGES
+    # TODO 367 OMG wtf
+    # 554
+    # 675
+    # 835
+    f = open('seeds.txt', 'w')
+    f.write('')
+    f.close()
+    f = open('exceptions.txt', 'w')
+    f.write('')
+    f.close()
     while not flag:
+        # try:
         flag = generate(i)
+        # except:
+        #     exceptions.append(i)
+        #     with open('exceptions.txt','w') as f:
+        #         for _ in exceptions:
+        #             f.write('\n'+str(_))
         if flag:
-            print(i)
+            seeds.append(i)
+
+            with open('seeds.txt', 'w') as f:
+                for _ in seeds:
+                    f.write('\n' + str(_))
+
         i += 1
         flag = False

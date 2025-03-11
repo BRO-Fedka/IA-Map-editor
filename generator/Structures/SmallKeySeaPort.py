@@ -3,7 +3,7 @@ from shapely.geometry import LineString, LinearRing, Polygon, Point
 import matplotlib.pyplot as plt
 
 
-class KeySeaPort:
+class SmallKeySeaPort:
     def __init__(self, island, seg, no_pier=False):
         self.island = island
         self.valid = False
@@ -17,19 +17,19 @@ class KeySeaPort:
         aver_x = (seg.coords[1][0] + seg.coords[0][0]) / 2
         aver_y = (seg.coords[1][1] + seg.coords[0][1]) / 2
         self.pier_root = Point(aver_x, aver_y)
-        pier_len = 0.5 / island.world.WH
+        pier_len = 0.35 / island.world.WH
         pier_approach = 0.05 / island.world.WH
-        sp_wh = 0.75 / island.world.WH
-        shift = 0.05 / island.world.WH
+        sp_wh = 0.5 / island.world.WH
+        shift = 0.5 / island.world.WH
         if no_pier:
             self.valid = True
         if self.has_pier:
-            if vec_l < 0.2 / island.world.WH:
+            if vec_l < 0.1 / island.world.WH:
                 print('no SP too small side')
                 return
         self.pier_line = LineString([(aver_x - vec_x * pier_approach, aver_y - vec_y * pier_approach),
                                      (aver_x + vec_x * pier_len, aver_y + vec_y * pier_len)])
-        self.pier = self.pier_line.buffer(0.1 / island.world.WH, cap_style=2)
+        self.pier = self.pier_line.buffer(0.075 / island.world.WH, cap_style=2)
         if self.has_pier:
             for i in island.world.ISLANDS:
                 if i != self.island and i.poly.buffer(0.5 / island.world.WH).intersects(self.pier):
@@ -41,24 +41,25 @@ class KeySeaPort:
                 print('no SP touch isles')
                 return
         self.sp_axis_line = LineString([(aver_x + vec_x * pier_len, aver_y + vec_y * pier_len), (
-        aver_x - vec_x * (pier_approach + sp_wh), aver_y - vec_y * (pier_approach + sp_wh))])
+            aver_x - vec_x * (pier_approach + sp_wh), aver_y - vec_y * (pier_approach + sp_wh))])
         self.sp_foundation = self.sp_axis_line.buffer(sp_wh / 2, cap_style=2)
         self.sp_foundation = self.sp_foundation.intersection(self.island.poly)  # .buffer(shift)
         self.sp_foundation = self.sp_foundation.minimum_rotated_rectangle
         self.pier = self.pier.difference(self.sp_foundation)
 
+    def save(self, data):
+        if not "C" in data.keys():
+            data['C'] = []
+        data['C'].append(list(
+            map(lambda v: list(map(lambda g: round(g * self.island.world.WH, 2), v)), self.pier.exterior.coords[:])))
+        data['C'].append(list(map(lambda v: list(map(lambda g: round(g * self.island.world.WH, 2), v)),
+                                  self.sp_foundation.exterior.coords[:])))
+
     def build(self):
         self.island.BUILT_AREA.append(self.sp_foundation.buffer(0.05 / self.island.world.WH))
-        self.island.CITY_AREA.append(self.sp_foundation.buffer(0.05 / self.island.world.WH))
 
     def is_valid(self):
         return self.valid
-
-    def save(self,data):
-        if not "C" in data.keys():
-            data['C'] = []
-        data['C'].append(list(map(lambda v: list(map(lambda g: round(g*self.island.world.WH, 2), v)), self.pier.exterior.coords[:])))
-        data['C'].append(list(map(lambda v: list(map(lambda g: round(g*self.island.world.WH, 2), v)), self.sp_foundation.exterior.coords[:])))
 
     def plot(self):
         if self.has_pier:

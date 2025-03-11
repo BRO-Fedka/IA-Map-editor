@@ -5,6 +5,7 @@ from random import *
 from typing import *
 import numpy
 import math
+import networkx as nx
 
 
 def segments(curve):

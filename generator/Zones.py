@@ -48,7 +48,7 @@ class BaseZone(Zone):
             pnt = Point(1, 1)
         for line in segments(ln):
             if line.intersects(pnt):
-                print('!')
+                # print('!')
                 continue
             dst = min(pnt.distance(line), dst)
         islands = []
@@ -96,7 +96,7 @@ class BaseZone(Zone):
             if iter < 1000:
                 islands.append(island)
         self.island = max(islands, key=lambda i: i.intersection(world.MAP_SQUARE).area)
-        world.ISLANDS.append(BaseIsland(self.island,world,self))
+        world.ISLANDS.append(BaseIsland(self.island,world,self)) #BaseIsland
 
     def plot(self):
         super().plot()
