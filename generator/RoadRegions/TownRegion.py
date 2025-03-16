@@ -1,7 +1,7 @@
 from generator.RoadRegions.RoadRegion import RoadRegion
 from generator.functions import *
 from generator.Structures.SimpleHouse import SimpleHouse
-
+from generator.Structures.DecoTree import DecoTree
 
 
 class TownRegion(RoadRegion):
@@ -55,17 +55,17 @@ class TownRegion(RoadRegion):
                         self.island.road_graf.add_edge(pth[i], pth[i + 1], length=0)
                     self.island.road_graf.update(self.island.road_graf.edges, self.island.road_graf.nodes)
                 except:
-                    print("NO edges",self.edges)
+                    print("NO edges", self.edges)
         tedges = polysegs(self.poly)
         tedges = list(map(lambda e: e.coords[:], tedges))
         for i in range(0, 20):
             # print('SH ITER',i,len(tedges))
 
             for edge in tedges:
-                iter = 100
+                iter = 50  # 100
                 while iter > 0:
                     iter -= 1
-                    h = SimpleHouse(self, edge, 2,0)
+                    h = SimpleHouse(self, edge, 2, 0)
                     if h.is_valid():
                         h.build()
                         self.objects.append(h)
@@ -80,5 +80,12 @@ class TownRegion(RoadRegion):
         #             h.build()
         #             self.objects.append(h)
         #             iter = 0
-
-
+        for _ in range(0, randint(3, 5) ** 2):
+            iter = 5
+            while iter > 0:
+                iter -= 1
+                h = DecoTree(self)
+                if h.is_valid():
+                    h.build()
+                    self.trees.append(h)
+                    break

@@ -43,12 +43,12 @@ class MapComponent(IMapComponent):
         if self._is_instance_hidden != self._is_hidden:
             self._is_instance_hidden = self._is_hidden
             if self._is_instance_hidden:
-                self._workspace.itemconfig(self._object_id,state='hidden')
+                self._workspace.itemconfig(self._object_id, state='hidden')
             else:
                 self._workspace.itemconfig(self._object_id, state='normal')
 
     @classmethod
-    def change_visibility(cls,val:bool):
+    def change_visibility(cls, val: bool):
         cls._is_hidden = val
 
     @classmethod
@@ -63,17 +63,20 @@ class MapComponent(IMapComponent):
     def update(cls, x0: float = None, x1: float = None, y0: float = None, y1: float = None):
 
         for instance in cls._instances:
-            X0, Y0, X1, Y1 = instance.get_bounds()
-            if X1 > x0 and X0 < x1 and Y1 > y0 and Y0 < y1:
-                instance.update_visibility()
-                if not instance._is_instance_hidden: instance.update_instance()
+            try:
+                X0, Y0, X1, Y1 = instance.get_bounds()
+                if X1 > x0 and X0 < x1 and Y1 > y0 and Y0 < y1:
+                    instance.update_visibility()
+                    if not instance._is_instance_hidden: instance.update_instance()
 
-                instance._were_visible_on_screen = True
-            elif instance._were_visible_on_screen:
-                instance.update_visibility()
-                instance.update_instance()
+                    instance._were_visible_on_screen = True
+                elif instance._were_visible_on_screen:
+                    instance.update_visibility()
+                    instance.update_instance()
 
-                instance._were_visible_on_screen = False
+                    instance._were_visible_on_screen = False
+            except:
+                pass
 
     def update_instance(self):
         pass

@@ -12,6 +12,7 @@ from Map.MapComponents.Buildings.HouseBuilding import HouseBuilding
 from Map.MapComponents.Buildings.CargoContainerBuilding import CargoContainerBuilding
 from Map.MapComponents.Buildings.HangarBuilding import HangarBuilding
 from Map.MapComponents.Buildings.ChimneyBuilding import ChimneyBuilding
+from Map.MapComponents.Buildings.CraneBuilding import CraneBuilding
 
 lst = get_finite_inherits(BaseBuilding)
 TREES_VARIANTS: Dict[str, Type[BaseBuilding]] = {}
@@ -109,9 +110,9 @@ class BuildingsMapComponent(MapComponent):
             for tree_lst in list_of_trees:
                 tcls = cls.new_component(workspace, MultiPoint(), map)
                 for t in tree_lst:
-                    # print(TREES_TYPE_ID[t[0]])
-                    # print(workspace, t[1], t[2],t[3],t[4], t[5], map)
-                    tcls.add_tree(TREES_TYPE_ID[t[0]](workspace, t[1], t[2], t[3], t[4], t[5], map))
+                    try:
+                        tcls.add_tree(TREES_TYPE_ID[t[0]](workspace, t[1], t[2], t[3], t[4], t[5], map))
+                    except:pass
                 tcls.update_shape()
                 tcls.update_instance()
                 tcls.update_ct()

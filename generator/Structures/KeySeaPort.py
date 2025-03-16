@@ -1,7 +1,8 @@
 import math
 from shapely.geometry import LineString, LinearRing, Polygon, Point
+from generator.functions import *
 import matplotlib.pyplot as plt
-
+from generator.Structures.ContainerGrid import ContainerGrid
 
 class KeySeaPort:
     def __init__(self, island, seg, no_pier=False):
@@ -13,6 +14,8 @@ class KeySeaPort:
         vec_l = math.sqrt(vec_x ** 2 + vec_y ** 2)
         vec_x /= vec_l
         vec_y /= vec_l
+        pvx = vec_x
+        pvy = vec_y
         vec_x, vec_y = vec_y, -vec_x
         aver_x = (seg.coords[1][0] + seg.coords[0][0]) / 2
         aver_y = (seg.coords[1][1] + seg.coords[0][1]) / 2
@@ -29,6 +32,20 @@ class KeySeaPort:
                 return
         self.pier_line = LineString([(aver_x - vec_x * pier_approach, aver_y - vec_y * pier_approach),
                                      (aver_x + vec_x * pier_len, aver_y + vec_y * pier_len)])
+        self.pier_crane_0 = [4,
+                             round((aver_x + vec_x * (pier_len - 0.1 / island.world.WH) + (
+                                     pvx * 0.04 / island.world.WH)) * island.world.WH, 2),
+                             round((aver_y + (pvy * 0.04 / island.world.WH) + vec_y * (
+                                     pier_len - 0.1 / island.world.WH)) * island.world.WH, 2),
+                             0.1, 0.1,
+                             round(lookat(vec_x, vec_y) + 90) % 360]
+        self.pier_crane_1 = [4,
+                             round((aver_x + vec_x * (pier_len - 0.25 / island.world.WH) - (
+                                     pvx * 0.04 / island.world.WH)) * island.world.WH, 2),
+                             round((aver_y - (pvy * 0.04 / island.world.WH) + vec_y * (
+                                     pier_len - 0.25 / island.world.WH)) * island.world.WH, 2),
+                             0.1, 0.1,
+                             round(lookat(vec_x, vec_y) + 270) % 360]
         self.pier = self.pier_line.buffer(0.1 / island.world.WH, cap_style=2)
         if self.has_pier:
             for i in island.world.ISLANDS:
@@ -41,10 +58,44 @@ class KeySeaPort:
                 print('no SP touch isles')
                 return
         self.sp_axis_line = LineString([(aver_x + vec_x * pier_len, aver_y + vec_y * pier_len), (
-        aver_x - vec_x * (pier_approach + sp_wh), aver_y - vec_y * (pier_approach + sp_wh))])
+            aver_x - vec_x * (pier_approach + sp_wh), aver_y - vec_y * (pier_approach + sp_wh))])
         self.sp_foundation = self.sp_axis_line.buffer(sp_wh / 2, cap_style=2)
         self.sp_foundation = self.sp_foundation.intersection(self.island.poly)  # .buffer(shift)
         self.sp_foundation = self.sp_foundation.minimum_rotated_rectangle
+        cg0_axis_line = LineString([(aver_x + vec_x * pier_len + (pvx * (0.75 / 2 - 0.3 / 2) / island.world.WH),
+                                          aver_y + (pvy * (0.75 / 2 - 0.3 / 2) / island.world.WH) + vec_y * pier_len),
+                                         (
+                                             aver_x - vec_x * (pier_approach + 0.3/island.world.WH) + (
+                                                         pvx * (0.75 / 2 - 0.3 / 2) / island.world.WH),
+                                             aver_y + (pvy * (0.75 / 2 - 0.3 / 2) / island.world.WH) - vec_y * (
+                                                         pier_approach + 0.3/island.world.WH))])
+        cg0_zone = cg0_axis_line.buffer(0.31 / 2 / island.world.WH, cap_style=2)
+        cg0_zone = cg0_zone.intersection(self.sp_foundation)  # .buffer(shift)
+        self.cg0 = ContainerGrid(cg0_zone,island)
+        cg1_axis_line = LineString([(aver_x + vec_x * pier_len - (pvx * (0.75 / 2 - 0.3 / 2) / island.world.WH),
+                                          aver_y - (pvy * (0.75 / 2 - 0.3 / 2) / island.world.WH) + vec_y * pier_len),
+                                         (
+                                             aver_x - vec_x * (pier_approach + 0.3/island.world.WH) - (
+                                                         pvx * (0.75 / 2 - 0.3 / 2) / island.world.WH),
+                                             aver_y - (pvy * (0.75 / 2 - 0.3 / 2) / island.world.WH) - vec_y * (
+                                                         pier_approach + 0.3/island.world.WH))])
+        cg1_zone = cg1_axis_line.buffer(0.31 / 2 / island.world.WH, cap_style=2)
+        cg1_zone = cg1_zone.intersection(self.sp_foundation)  # .buffer(shift)
+        self.cg1 = ContainerGrid(cg1_zone,island)
+        self.hangar_0 = [3,
+                         round((aver_x - vec_x * (pier_approach + sp_wh - 0.17 / island.world.WH) + (
+                                 pvx * (0.75 / 2 - 0.29 / 2) / island.world.WH)) * island.world.WH, 2),
+                         round((aver_y - vec_y * (pier_approach + sp_wh - 0.17 / island.world.WH) + (
+                                 pvy * (0.75 / 2 - 0.29 / 2) / island.world.WH)) * island.world.WH, 2),
+                         0.3, 0.25,
+                         round(lookat(vec_x, vec_y))]
+        self.hangar_1 = [3,
+                         round((aver_x - vec_x * (pier_approach + sp_wh - 0.17 / island.world.WH) + (
+                                 pvx * -(0.75 / 2 - 0.29 / 2) / island.world.WH)) * island.world.WH, 2),
+                         round((aver_y - vec_y * (pier_approach + sp_wh - 0.17 / island.world.WH) + (
+                                 pvy * -(0.75 / 2 - 0.29 / 2) / island.world.WH)) * island.world.WH, 2),
+                         0.3, 0.25,
+                         round(lookat(vec_x, vec_y))]
         self.pier = self.pier.difference(self.sp_foundation)
 
     def build(self):
@@ -54,11 +105,23 @@ class KeySeaPort:
     def is_valid(self):
         return self.valid
 
-    def save(self,data):
+    def save(self, data):
         if not "C" in data.keys():
             data['C'] = []
-        data['C'].append(list(map(lambda v: list(map(lambda g: round(g*self.island.world.WH, 2), v)), self.pier.exterior.coords[:])))
-        data['C'].append(list(map(lambda v: list(map(lambda g: round(g*self.island.world.WH, 2), v)), self.sp_foundation.exterior.coords[:])))
+        data['C'].append(list(
+            map(lambda v: list(map(lambda g: round(g * self.island.world.WH, 2), v)), self.pier.exterior.coords[:])))
+        data['C'].append(list(map(lambda v: list(map(lambda g: round(g * self.island.world.WH, 2), v)),
+                                  self.sp_foundation.exterior.coords[:])))
+        if not "#" in data.keys():
+            data['#'] = []
+        data['#'].append([
+            self.pier_crane_0,
+            self.pier_crane_1,
+            self.hangar_0,
+            self.hangar_1
+        ])
+        data['#'].append(self.cg0.get_as_list())
+        data['#'].append(self.cg1.get_as_list())
 
     def plot(self):
         if self.has_pier:

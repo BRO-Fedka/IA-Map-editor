@@ -2,6 +2,7 @@ from generator.RoadRegions.RoadRegion import RoadRegion
 from generator.functions import *
 from generator.Structures.SimpleHouse import SimpleHouse
 from generator.Structures.Rock import Rock
+from generator.Structures.Tree import Tree
 
 
 class WoodRegion(RoadRegion):
@@ -29,12 +30,21 @@ class WoodRegion(RoadRegion):
                                     self.objects.append(h)
                                     self.houses.append(h)
                                     break
-        for _ in range(0,randint(1,5)**2):
-            iter = 100
+        for _ in range(0, randint(1, 5) ** 2):
+            iter = 50#100
             while iter > 0:
                 iter -= 1
                 h = Rock(self)
                 if h.is_valid():
                     h.build()
                     self.objects.append(h)
+                    break
+        for _ in range(0,randint(2, 8) ** 2):
+            iter = 2
+            while iter > 0:
+                iter -= 1
+                h = Tree(self)
+                if h.is_valid():
+                    h.build()
+                    self.trees.append(h)
                     break

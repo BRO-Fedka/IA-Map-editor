@@ -10,7 +10,10 @@ class RoadRegion:
         self.poly = poly
         self.island = island
         self.ROCK_AREAS = []
+        self.TREE_POINTS = []
+        self.TREE_AREAS = []
         self.houses = []
+        self.trees = []
 
         self.color = "#fff"
         self.roaded_points = set()
@@ -40,6 +43,13 @@ class RoadRegion:
             data['#'] = []
         if len(hlist) > 0:
             data['#'].append(hlist)
+        htrees = []
+        for h in self.trees:
+            h.save(htrees)
+        if not 'T' in data.keys():
+            data['T'] = []
+        if len(htrees) > 0:
+            data['T'].append(htrees)
 
     def generate(self):
         pass

@@ -36,6 +36,7 @@ class Island:
         self.CITY_AREA = []
         self.TOWN_RR_AREA = []
         self.road_graf_points = []
+
         # self.road_t_points = set()
         sx = 0
         sy = 0
@@ -327,13 +328,13 @@ class Island:
         for r in self.roads_protos:
             seq = tuple(map(tuple,r))
             for i in range(0,len(seq)-1):
-                # all_roads.add((seq[i], seq[i + 1]))
-                l = LineString((seq[i],seq[i+1]))
-                for sh in self.BUILT_AREA:
-                    if l.intersects(sh):
-                        break
-                else:
-                    all_roads.add((seq[i], seq[i + 1]))
+                all_roads.add(((round(seq[i][0] * self.world.WH, 2),round(seq[i][1] * self.world.WH, 2)), (round(seq[i+1][0] * self.world.WH, 2),round(seq[i+1][1] * self.world.WH, 2))))
+                # l = LineString((seq[i],seq[i+1]))
+                # for sh in self.BUILT_AREA:
+                #     if l.intersects(sh):
+                #         break
+                # else:
+                #     all_roads.add((seq[i], seq[i + 1]))
 
                 # try:
                 #     l = LineString((seq[i],seq[i+1]))
@@ -352,7 +353,8 @@ class Island:
             if not 'R' in data:
                 data['R'] = []
             for r in list(all_roads):
-                data['R'].append(list(map(lambda e: list(map(lambda g: round(g * self.world.WH, 2),e)),r)))
+                if r[0] != r[1]:
+                    data['R'].append(list(map(list,r)))
 
     def plot(self):
         plt.plot(*self.poly.exterior.xy, '-k')
@@ -382,3 +384,4 @@ class Island:
             plt.plot(*LineString([r[0], r[1]]).xy, '-r')
         # for r in self.BUILT_AREA:
         #     plt.plot(*r.exterior.xy, '-m')
+        

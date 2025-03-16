@@ -1,5 +1,6 @@
 from generator.Zones import *
 import json
+from perlin_noise import PerlinNoise
 
 
 class WorldCommon:
@@ -13,6 +14,7 @@ class WorldCommon:
         self.RATIOS = []
         self.ISLANDS = []
         self.BUILT_AREA = []
+        self.TREETYPE_NOISE = PerlinNoise(octaves=30, seed=sd)
         self.BRIDGES = []
         self.WH = wh
 
