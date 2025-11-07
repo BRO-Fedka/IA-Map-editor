@@ -116,10 +116,10 @@ class SmallKeySeaPort:
     def is_valid(self):
         return self.valid
 
-    def plot(self):
+    def plot(self,cl='b'):
         if self.has_pier:
-            plt.plot(*self.pier.exterior.xy, '-b')
-        plt.plot(*self.sp_foundation.exterior.xy, '-b')
+            plt.plot(*self.pier.exterior.xy, '-'+cl)
+        plt.plot(*self.sp_foundation.exterior.xy, '-'+cl)
 
     @staticmethod
     def key(p):

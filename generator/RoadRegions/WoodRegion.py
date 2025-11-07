@@ -21,7 +21,7 @@ class WoodRegion(RoadRegion):
                         town_edges.append(edge)
                         # self.island.markedges.append(edge)
                         for i in range(0, 5):
-                            iter = randint(20, 30)
+                            iter = 1#randint(20, 30)
                             while iter > 0:
                                 iter -= 1
                                 h = SimpleHouse(self, edge)
@@ -31,7 +31,7 @@ class WoodRegion(RoadRegion):
                                     self.houses.append(h)
                                     break
         for _ in range(0, randint(1, 5) ** 2):
-            iter = 50#100
+            iter = 1#50#100
             while iter > 0:
                 iter -= 1
                 h = Rock(self)
@@ -40,7 +40,7 @@ class WoodRegion(RoadRegion):
                     self.objects.append(h)
                     break
         for _ in range(0,randint(2, 8) ** 2):
-            iter = 2
+            iter = 1#2
             while iter > 0:
                 iter -= 1
                 h = Tree(self)

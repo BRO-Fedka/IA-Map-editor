@@ -358,28 +358,31 @@ class Island:
 
     def plot(self):
         plt.plot(*self.poly.exterior.xy, '-k')
-        plt.plot(self.aver_center.x, self.aver_center.y, 'xm')
+        # plt.plot(*self.road_zone.exterior.xy, '-r')
+
+        # plt.plot(self.aver_center.x, self.aver_center.y, 'xm')
         plt.plot(self.poly.centroid.x, self.poly.centroid.y, 'xy')
         # self.road_t_points = list(self.road_t_points)
         if self.lawn:
             plt.plot(*self.lawn.exterior.xy, '-g')
-        # for r in self.road_reg_polys:
-        #     plt.plot(*r.exterior.xy, '-y')
-        # for r in self.road_t_points:
-        #     plt.plot(r[0], r[1], '.g')
-        # if
-        plt.text(self.poly.centroid.x, self.poly.centroid.y, str(self.id))
-        # if self.road_graf:
-        #     for r in self.road_graf.edges:
-        #         plt.plot(*LineString([r[0], r[1]]).xy, '--m')
+        for r in self.road_reg_polys:
+            plt.plot(*r.exterior.xy, '-y')
+        for r in self.road_points:
+            plt.plot(r[0], r[1], '.g')
+        # i
+
+        # plt.text(self.poly.centroid.x, self.poly.centroid.y, str(self.id))
+        if self.road_graf:
+            for r in self.road_graf.edges:
+                plt.plot(*LineString([r[0], r[1]]).xy, '-m')
         # if self.roads_protos:
         for rr in self.road_regions:
             rr.plot()
-        for r in self.roads_protos:
-            try:
-                plt.plot(*LineString(r).xy, '-k')
-            except:
-                pass
+        # for r in self.roads_protos:
+        #     try:
+        #         plt.plot(*LineString(r).xy, '-k')
+        #     except:
+        #         pass
         for r in self.markedges:
             plt.plot(*LineString([r[0], r[1]]).xy, '-r')
         # for r in self.BUILT_AREA:

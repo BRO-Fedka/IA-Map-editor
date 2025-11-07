@@ -86,8 +86,8 @@ def generate(s, wh=32):
         i.generate()
     for i in world.ISLANDS:
         i.generate1()
-    for i in world.ISLANDS:
-        i.generate2()
+    # for i in world.ISLANDS:
+    #     i.generate2()
 
     for z in world.ZONES:
         z.plot()

@@ -62,7 +62,7 @@ class TownRegion(RoadRegion):
             # print('SH ITER',i,len(tedges))
 
             for edge in tedges:
-                iter = 50  # 100
+                iter =1 #50  # 100
                 while iter > 0:
                     iter -= 1
                     h = SimpleHouse(self, edge, 2, 0)
@@ -81,7 +81,7 @@ class TownRegion(RoadRegion):
         #             self.objects.append(h)
         #             iter = 0
         for _ in range(0, randint(3, 5) ** 2):
-            iter = 5
+            iter = 1#5
             while iter > 0:
                 iter -= 1
                 h = DecoTree(self)

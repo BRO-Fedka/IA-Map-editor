@@ -10,8 +10,8 @@ class ChimneyBuilding(BaseBuilding):
     type_id: int = 2
     _map_ct: str = 'if'
 
-    def __init__(self, workspace: IWorkspace, x: float, y: float, w: float, h: float, direction: int, map: IMap):
-        super().__init__(workspace, x, y, w, h,direction, map)
+    def __init__(self, workspace: IWorkspace, x: float, y: float, w: float, h: float, direction: int,pi:int, map: IMap):
+        super().__init__(workspace, x, y, w, h,direction,pi, map)
         self._map.get_ct_field('is')
         self._map.get_ct_field('io')
 

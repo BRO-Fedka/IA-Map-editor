@@ -7,8 +7,11 @@ from GUI.PropertyInputs.PositiveFloatPI import PositiveFloatPI
 from GUI.PropertyInputs.DirectionPI import DirectionPI
 from GUI.PropertyInputs.ButtonPI import ButtonPI
 from GUI.PropertyInputs.ComboBoxPI import ComboBoxPI
+from GUI.PropertyInputs.TextLinePI import TextLinePI
 from Map.MapComponents.Buildings.BaseBuilding import BaseBuilding
 from Map.MapComponents.Buildings.HouseBuilding import HouseBuilding
+from Map.MapComponents.Buildings.CircularBuilding import CircularBuilding
+from Map.MapComponents.Buildings.RadarBuilding import RadarBuilding
 from Map.MapComponents.Buildings.CargoContainerBuilding import CargoContainerBuilding
 from Map.MapComponents.Buildings.HangarBuilding import HangarBuilding
 from Map.MapComponents.Buildings.ChimneyBuilding import ChimneyBuilding
@@ -36,7 +39,7 @@ class BuildingsMapComponent(MapComponent):
         self._selected_trees: Set[int] = set()
         self._trees: List[BaseBuilding] = []
         for coord in shape.geoms:
-            self._trees.append(HouseBuilding(workspace, coord.x, coord.y, 0.1, 0.1, 0, map))
+            self._trees.append(HouseBuilding(workspace, coord.x, coord.y, 0.1, 0.1, 0,-1, map))
 
         self.update_instance_ct()
         self.update_instance()
@@ -111,8 +114,19 @@ class BuildingsMapComponent(MapComponent):
                 tcls = cls.new_component(workspace, MultiPoint(), map)
                 for t in tree_lst:
                     try:
-                        tcls.add_tree(TREES_TYPE_ID[t[0]](workspace, t[1], t[2], t[3], t[4], t[5], map))
-                    except:pass
+                        pid = -1
+                        try:
+                            if isinstance(TREES_TYPE_ID[t[0]], CircularBuilding):
+                                pid = int(t[4])
+                            else:
+                                pid = int(t[6])
+                        except:pass
+                        if issubclass(TREES_TYPE_ID[t[0]],CircularBuilding):
+                            tcls.add_tree(TREES_TYPE_ID[t[0]](workspace, t[1], t[2], t[3], t[3], 0, pid, map))
+                        else:
+                            tcls.add_tree(TREES_TYPE_ID[t[0]](workspace, t[1], t[2], t[3], t[4], t[5], pid, map))
+                    except:
+                        logging.exception('')
                 tcls.update_shape()
                 tcls.update_instance()
                 tcls.update_ct()
@@ -194,11 +208,15 @@ class BuildingsMapComponent(MapComponent):
         # print(cls)
         for tree_id in list(self._selected_trees):
             self._trees[tree_id].delete()
-            self._trees[tree_id] = cls(self._workspace, self._trees[tree_id].x, self._trees[tree_id].y, 0.1, 0.1, 0,
+            self._trees[tree_id] = cls(self._workspace, self._trees[tree_id].x, self._trees[tree_id].y, self._trees[tree_id].get_w(), self._trees[tree_id].get_h(), self._trees[tree_id].get_direction(),self._trees[tree_id].get_parent_id(),
                                        self._map)
             # print(self._trees[tree_id])
             self._trees[tree_id].select()
         self.update_shape()
+
+    def set_parent_id(self,val):
+        for tree_id in list(self._selected_trees):
+            self._trees[tree_id].set_parent_id(val)
 
     def get_properties(self) -> List[MCProperty]:
         if len(self._selected_trees) > 0:
@@ -212,7 +230,9 @@ class BuildingsMapComponent(MapComponent):
                 MCProperty(ButtonPI, lambda: None, lambda: None, {'text': 'Select All', 'command': self.select_all},
                            ''),
                 MCProperty(ComboBoxPI, self.set_type, lambda: type(self._trees[list(self._selected_trees)[0]]).__name__,
-                           {'values': list(TREES_VARIANTS.keys())}, "Type")
+                           {'values': list(TREES_VARIANTS.keys())}, "Type"),
+                MCProperty(TextLinePI, self.set_parent_id, lambda: self._trees[list(self._selected_trees)[0]].get_parent_id(), {'width':4},
+                           'Parent ID')
             ]
 
         else:

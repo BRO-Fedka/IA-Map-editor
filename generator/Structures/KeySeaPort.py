@@ -4,6 +4,7 @@ from generator.functions import *
 import matplotlib.pyplot as plt
 from generator.Structures.ContainerGrid import ContainerGrid
 
+
 class KeySeaPort:
     def __init__(self, island, seg, no_pier=False):
         self.island = island
@@ -63,25 +64,25 @@ class KeySeaPort:
         self.sp_foundation = self.sp_foundation.intersection(self.island.poly)  # .buffer(shift)
         self.sp_foundation = self.sp_foundation.minimum_rotated_rectangle
         cg0_axis_line = LineString([(aver_x + vec_x * pier_len + (pvx * (0.75 / 2 - 0.3 / 2) / island.world.WH),
-                                          aver_y + (pvy * (0.75 / 2 - 0.3 / 2) / island.world.WH) + vec_y * pier_len),
-                                         (
-                                             aver_x - vec_x * (pier_approach + 0.3/island.world.WH) + (
-                                                         pvx * (0.75 / 2 - 0.3 / 2) / island.world.WH),
-                                             aver_y + (pvy * (0.75 / 2 - 0.3 / 2) / island.world.WH) - vec_y * (
-                                                         pier_approach + 0.3/island.world.WH))])
+                                     aver_y + (pvy * (0.75 / 2 - 0.3 / 2) / island.world.WH) + vec_y * pier_len),
+                                    (
+                                        aver_x - vec_x * (pier_approach + 0.3 / island.world.WH) + (
+                                                pvx * (0.75 / 2 - 0.3 / 2) / island.world.WH),
+                                        aver_y + (pvy * (0.75 / 2 - 0.3 / 2) / island.world.WH) - vec_y * (
+                                                pier_approach + 0.3 / island.world.WH))])
         cg0_zone = cg0_axis_line.buffer(0.31 / 2 / island.world.WH, cap_style=2)
         cg0_zone = cg0_zone.intersection(self.sp_foundation)  # .buffer(shift)
-        self.cg0 = ContainerGrid(cg0_zone,island)
+        self.cg0 = ContainerGrid(cg0_zone, island)
         cg1_axis_line = LineString([(aver_x + vec_x * pier_len - (pvx * (0.75 / 2 - 0.3 / 2) / island.world.WH),
-                                          aver_y - (pvy * (0.75 / 2 - 0.3 / 2) / island.world.WH) + vec_y * pier_len),
-                                         (
-                                             aver_x - vec_x * (pier_approach + 0.3/island.world.WH) - (
-                                                         pvx * (0.75 / 2 - 0.3 / 2) / island.world.WH),
-                                             aver_y - (pvy * (0.75 / 2 - 0.3 / 2) / island.world.WH) - vec_y * (
-                                                         pier_approach + 0.3/island.world.WH))])
+                                     aver_y - (pvy * (0.75 / 2 - 0.3 / 2) / island.world.WH) + vec_y * pier_len),
+                                    (
+                                        aver_x - vec_x * (pier_approach + 0.3 / island.world.WH) - (
+                                                pvx * (0.75 / 2 - 0.3 / 2) / island.world.WH),
+                                        aver_y - (pvy * (0.75 / 2 - 0.3 / 2) / island.world.WH) - vec_y * (
+                                                pier_approach + 0.3 / island.world.WH))])
         cg1_zone = cg1_axis_line.buffer(0.31 / 2 / island.world.WH, cap_style=2)
         cg1_zone = cg1_zone.intersection(self.sp_foundation)  # .buffer(shift)
-        self.cg1 = ContainerGrid(cg1_zone,island)
+        self.cg1 = ContainerGrid(cg1_zone, island)
         self.hangar_0 = [3,
                          round((aver_x - vec_x * (pier_approach + sp_wh - 0.17 / island.world.WH) + (
                                  pvx * (0.75 / 2 - 0.29 / 2) / island.world.WH)) * island.world.WH, 2),
@@ -123,10 +124,11 @@ class KeySeaPort:
         data['#'].append(self.cg0.get_as_list())
         data['#'].append(self.cg1.get_as_list())
 
-    def plot(self):
+    def plot(self,cl='b'):
         if self.has_pier:
-            plt.plot(*self.pier.exterior.xy, '-b')
-        plt.plot(*self.sp_foundation.exterior.xy, '-b')
+            plt.plot(*self.pier.exterior.xy, '-'+cl)
+        plt.plot(*self.sp_foundation.exterior.xy, '-'+cl)
+        plt.plot(*self.pier_root.xy, '.'+cl)
 
     @staticmethod
     def key(p):

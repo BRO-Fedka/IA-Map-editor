@@ -32,6 +32,7 @@ class KeyIsland(Island):
             sps.sort(key=SmallKeySeaPort.key)
         else:
             sps.sort(key=sp_type.key)
+        self.sps = sps
         self.sea_port = sps[0]
         self.sea_port.build()
         for crd in self.sea_port.sp_foundation.exterior.coords:
@@ -42,6 +43,7 @@ class KeyIsland(Island):
         self.sea_port.save(data)
 
     def generate1(self):
+        return
         super().generate1()
 
     def plot(self):
@@ -66,8 +68,10 @@ class KeyIsland(Island):
         asy /= len(all_ises)
         sasx **= 1 / len(all_ises)
         sasy **= 1 / len(all_ises)
-        plt.plot(asx, asy, '.m')
-        plt.plot(sx, sy, '.y')
-        plt.plot(sasx, sasy, 'xg')
+        # plt.plot(asx, asy, '.m')
+        # plt.plot(sx, sy, '.y')
+        # plt.plot(sasx, sasy, 'xg')
+        # for _ in self.sps:
+        #     _.plot('r')
         if self.sea_port:
             self.sea_port.plot()

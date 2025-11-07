@@ -43,15 +43,16 @@ class Rock:
 
         self.valid = True
         while True:
-            vertsamnt = max(7,randint(math.ceil(r/0.1/self.rr.island.world.WH*3.5),math.ceil(r/0.1/self.rr.island.world.WH*5)))
+            vertsamnt = max(7, randint(math.ceil(r / 0.1 / self.rr.island.world.WH * 3.5),
+                                       math.ceil(r / 0.1 / self.rr.island.world.WH * 5)))
             verts = []
             for _ in range(vertsamnt):
-                deg = random()*2*math.pi
-                verts.append([deg,(x+math.cos(deg)*r,y+math.sin(deg)*r)])
+                deg = random() * 2 * math.pi
+                verts.append([deg, (x + math.cos(deg) * r, y + math.sin(deg) * r)])
             verts.sort()
-            verts = list(map(lambda e: e[1],verts))
+            verts = list(map(lambda e: e[1], verts))
             self.rock = Polygon(verts)
-            if self.rock.area/self.circle.area>0.7:
+            if self.rock.area / self.circle.area > 0.7:
                 break
 
     def build(self):
@@ -64,9 +65,8 @@ class Rock:
     def plot(self):
         plt.plot(*self.rock.exterior.xy, '-k')
 
-    def save(self,data):
+    def save(self, data):
         if not "S" in data.keys():
             data['S'] = []
-        data['S'].append(list(map(lambda v: list(map(lambda g: round(g*self.rr.island.world.WH, 2), v)), self.rock.exterior.coords[:])))
-
-
+        data['S'].append(list(
+            map(lambda v: list(map(lambda g: round(g * self.rr.island.world.WH, 2), v)), self.rock.exterior.coords[:])))

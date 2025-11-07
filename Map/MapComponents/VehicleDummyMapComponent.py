@@ -98,7 +98,7 @@ class VehicleDummyMapComponent(MapComponent):
     def get_properties(self) -> List[MCProperty]:
         return [
             MCProperty(DirectionPI, self.set_direction, self.get_direction, {}, "Direction"),
-            MCProperty(ColorPI, self.set_color, self.get_color, {}, "Direction"),
+            MCProperty(ColorPI, self.set_color, self.get_color, {}, "Color"),
             MCProperty(ComboBoxPI, self.set_type, self.get_type, {"values": list(VEHICLES_SHAPES.keys())}, "Type"),
 
         ]

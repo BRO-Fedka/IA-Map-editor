@@ -7,6 +7,7 @@ from Map.IMap import IMap
 from functions.functions import hex_to_rgb
 from svgwrite.shapes import Polygon as SVG_Polygon
 import math
+from typing import Union
 
 
 class BaseBuilding:
@@ -17,7 +18,7 @@ class BaseBuilding:
         return self.x + coords[0] * self._vx[0] + coords[1] * self._vy[0], self.y + coords[0] * self._vx[1] + coords[
             1] * self._vy[1]
 
-    def __init__(self, workspace: IWorkspace, x: float, y: float, w: float, h: float, direction: int, map: IMap):
+    def __init__(self, workspace: IWorkspace, x: float, y: float, w: float, h: float, direction: int, parent_id:int, map: IMap):
         self._object_id = workspace.create_polygon(0, 0, 0, 0, fill="#fff", outline='',
                                                    tags=type(self).__name__)
         self._workspace = workspace
@@ -27,7 +28,7 @@ class BaseBuilding:
         self._w = w
         self._h = h
         self._is_selected = False
-        self._size = 0
+        self._parent_id = -1
         self._shape = Polygon()
         self._poly_shape = []
         self._vx = (0, 0)
@@ -36,6 +37,7 @@ class BaseBuilding:
         self.set_direction(direction)
         self.set_w(w)
         self.set_h(h)
+        self.set_parent_id(parent_id)
         self.update_shape()
         self.update_ct()
 
@@ -44,6 +46,12 @@ class BaseBuilding:
 
     def show(self):
         self._workspace.itemconfig(self._object_id, state="normal")
+
+    def set_parent_id(self, val: Union[str,int]):
+        self._parent_id = int(val)
+
+    def get_parent_id(self):
+        return self._parent_id
 
     def set_direction(self, val: int):
         self._direction = val
@@ -110,10 +118,12 @@ class BaseBuilding:
         poly.fill(self._map.get_ct_field(self._map_ct))
 
     def get_as_list(self) -> List:
-        # print([self.type_id, round(self.x, 2), round(self.y, 2), round(self._w, 2), round(self._h, 2),
-        #         self.get_direction()])
-        return [self.type_id, round(self.x, 2), round(self.y, 2), round(self._w, 2), round(self._h, 2),
-                self.get_direction()]
+        if self.get_parent_id() == -1:
+            return [self.type_id, round(self.x, 2), round(self.y, 2), round(self._w, 2), round(self._h, 2),
+                    self.get_direction()]
+        else:
+            return [self.type_id, round(self.x, 2), round(self.y, 2), round(self._w, 2), round(self._h, 2),
+                    self.get_direction(),self.get_parent_id()]
 
     def update(self):
         poly_cords = []

@@ -15,10 +15,10 @@ class DirectedBuilding(BaseBuilding):
     _map_ct: str = 'bg'
     _len_dirmark: float = None
 
-    def __init__(self, workspace: IWorkspace, x: float, y: float, w: float, h: float, direction: int, map: IMap):
+    def __init__(self, workspace: IWorkspace, x: float, y: float, w: float, h: float, direction: int,pi:int, map: IMap):
         self._dirmark_id = workspace.create_line(0, 0, 0, 0, fill="#f00",
                                                  tags=type(self).__name__)
-        super().__init__(workspace, x, y, w, h, direction, map)
+        super().__init__(workspace, x, y, w, h, direction,pi, map)
 
     def update(self):
         super().update()

@@ -55,7 +55,8 @@ class RoadRegion:
         pass
 
     def plot(self):
-        plt.fill(*self.poly.exterior.xy, facecolor=self.color, edgecolor='none')
-        for obj in self.objects:
-            obj.plot()
-            print(type(self))
+        pass
+        # plt.fill(*self.poly.exterior.xy, facecolor=self.color, edgecolor='none')
+        # for obj in self.objects:
+        #     obj.plot()
+        #     print(type(self))

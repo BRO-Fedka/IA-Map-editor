@@ -15,6 +15,7 @@ from Map.MapComponents.ConcreteMapComponent import ConcreteMapComponent
 from Map.MapComponents.StoneMapComponent import StoneMapComponent
 from Map.MapComponents.CapturePointMapComponent import CapturePointMapComponent
 from Map.MapComponents.VehicleDummyMapComponent import VehicleDummyMapComponent
+from Map.MapComponents.SpawnPointMapComponent import SpawnPointMapComponent
 from Map.MapComponents.BuildingsMapComponent import BuildingsMapComponent
 from Map.MapComponents.TreesMapComponent import TreesMapComponent
 

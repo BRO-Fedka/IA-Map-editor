@@ -31,7 +31,7 @@ class Zone:
     def plot(self):
         for s in self.stones:
             plt.plot(s.x, s.y, '.m')
-        # plt.plot(*self.poly.exterior.xy, ':b')
+        plt.plot(*self.poly.centroid.xy, 'xb')
         # plt.plot(self.x, self.y, '.b')
 
 
